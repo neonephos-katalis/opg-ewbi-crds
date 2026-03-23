@@ -1,0 +1,158 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.1
+  name: applicationdeployments.opg.ewbi.katalis.com
+spec:
+  group: opg.ewbi.katalis.com
+  names:
+    kind: ApplicationDeployment
+    listKind: ApplicationDeploymentList
+    plural: applicationdeployments
+    shortNames:
+    - deploy
+    singular: applicationdeployment
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: ApplicationDeployment is the Schema for the applicationdeployments
+          API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ApplicationDeploymentSpec defines the desired state of ApplicationDeployment
+            properties:
+              appDetails:
+                description: AppDetails definisce i dettagli dell'applicazione
+                properties:
+                  appInstCallbackLink:
+                    type: string
+                  appVersion:
+                    type: string
+                  zoneInfo:
+                    description: ZoneInfo definisce le informazioni della zona per
+                      l'applicazione
+                    properties:
+                      flavourId:
+                        type: string
+                      resPool:
+                        pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,30}[A-Za-z0-9]$
+                        type: string
+                      resourceConsumption:
+                        default: RESERVED_RES_AVOID
+                        enum:
+                        - RESERVED_RES_SHALL
+                        - RESERVED_RES_PREFER
+                        - RESERVED_RES_AVOID
+                        - RESERVED_RES_FORBID
+                        type: string
+                    type: object
+                type: object
+              appId:
+                pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                type: string
+              appInstanceId:
+                pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,62}[A-Za-z0-9]$
+                type: string
+              appProviderId:
+                pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                type: string
+              federationContextId:
+                pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                type: string
+              transactionId:
+                format: uuid
+                type: string
+              zoneId:
+                pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                type: string
+            required:
+            - federationContextId
+            type: object
+          status:
+            description: ApplicationDeploymentStatus defines the observed state of
+              ApplicationDeployment.
+            properties:
+              accessPointInfo:
+                items:
+                  properties:
+                    accessPoints:
+                      properties:
+                        fqdn:
+                          type: string
+                        ipv4Addresses:
+                          items:
+                            pattern: ^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$
+                            type: string
+                          minItems: 1
+                          type: array
+                        ipv6Addresses:
+                          description: 'Nota: Le regole pattern ''allOf'' originali
+                            andranno verificate tramite Webhook.'
+                          items:
+                            type: string
+                          minItems: 1
+                          type: array
+                        port:
+                          format: int32
+                          minimum: 0
+                          type: integer
+                      required:
+                      - port
+                      type: object
+                    interfaceId:
+                      pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,30}[A-Za-z0-9]$
+                      type: string
+                  required:
+                  - accessPoints
+                  - interfaceId
+                  type: object
+                minItems: 1
+                type: array
+              appInstanceInfo:
+                items:
+                  properties:
+                    appInstIdentifier:
+                      pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,62}[A-Za-z0-9]$
+                      type: string
+                    appInstanceState:
+                      enum:
+                      - PENDING
+                      - READY
+                      - FAILED
+                      - TERMINATING
+                      type: string
+                  required:
+                  - appInstIdentifier
+                  - appInstanceState
+                  type: object
+                minItems: 1
+                type: array
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

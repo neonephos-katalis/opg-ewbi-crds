@@ -1,0 +1,169 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.1
+  name: images.opg.ewbi.katalis.com
+spec:
+  group: opg.ewbi.katalis.com
+  names:
+    kind: Image
+    listKind: ImageList
+    plural: images
+    singular: image
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: Image is the Schema for the images API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ImageSpec defines the desired state of Image
+            properties:
+              federationContextId:
+                pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                type: string
+              imageBody:
+                properties:
+                  appProviderId:
+                    pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                    type: string
+                  checksum:
+                    type: string
+                  image:
+                    format: byte
+                    type: string
+                  imageDescription:
+                    maxLength: 128
+                    minLength: 8
+                    type: string
+                  imageName:
+                    pattern: ^[A-Za-z][A-Za-z0-9_]{7,31}$
+                    type: string
+                  imageRepoLocation:
+                    items:
+                      properties:
+                        password:
+                          type: string
+                        repoURL:
+                          type: string
+                        token:
+                          type: string
+                        userName:
+                          type: string
+                      type: object
+                    type: array
+                  imageType:
+                    enum:
+                    - QCOW2
+                    - DOCKER
+                    - OVA
+                    type: string
+                  imageVersionInfo:
+                    type: string
+                  imgInsSetArch:
+                    enum:
+                    - ISA_X86_64
+                    - ISA_ARM_64
+                    type: string
+                  imgOSType:
+                    properties:
+                      architecture:
+                        enum:
+                        - x86_64
+                        - x86
+                        type: string
+                      distribution:
+                        enum:
+                        - RHEL
+                        - UBUNTU
+                        - COREOS
+                        - FEDORA
+                        - WINDOWS
+                        - OTHER
+                        type: string
+                      license:
+                        enum:
+                        - OS_LICENSE_TYPE_FREE
+                        - OS_LICENSE_TYPE_ON_DEMAND
+                        - NOT_SPECIFIED
+                        type: string
+                      version:
+                        enum:
+                        - OS_VERSION_UBUNTU_2204_LTS
+                        - OS_VERSION_RHEL_8
+                        - OS_VERSION_RHEL_7
+                        - OS_VERSION_DEBIAN_11
+                        - OS_VERSION_COREOS_STABLE
+                        - OS_MS_WINDOWS_2012_R2
+                        - OTHER
+                        type: string
+                    required:
+                    - architecture
+                    - distribution
+                    - license
+                    - version
+                    type: object
+                  repoType:
+                    enum:
+                    - PRIVATEREPO
+                    - PUBLICREPO
+                    - UPLOAD
+                    type: string
+                required:
+                - appProviderId
+                - imageName
+                - imageType
+                - imageVersionInfo
+                - imgInsSetArch
+                - imgOSType
+                type: object
+              imageId:
+                format: uuid
+                type: string
+            required:
+            - federationContextId
+            - imageId
+            type: object
+          status:
+            description: ImageStatus defines the observed state of Image.
+            properties:
+              lastUpdated:
+                format: date-time
+                type: string
+              message:
+                type: string
+              state:
+                enum:
+                - Pending
+                - Uploading
+                - Uploaded
+                - Failed
+                type: string
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

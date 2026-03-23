@@ -1,0 +1,478 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.1
+  name: artefacts.opg.ewbi.katalis.com
+spec:
+  group: opg.ewbi.katalis.com
+  names:
+    kind: Artefact
+    listKind: ArtefactList
+    plural: artefacts
+    singular: artefact
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: Artefact is the Schema for the artefacts API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: FederationSpec defines the desired state of Federation
+            properties:
+              capType:
+                enum:
+                - NW_CAP_CONN_STATE_CHANGE
+                - NW_CAP_LOCATION_RETRIEVAL
+                - NW_CAP_USERPLANE_MGMT_EVENTS
+                - NW_CAP_DYNAMIC_QOS
+                type: string
+              federationData:
+                properties:
+                  initialDate:
+                    format: date-time
+                    type: string
+                  origOPCountryCode:
+                    pattern: ^[A-Z]{2}$
+                    type: string
+                  origOPFederationId:
+                    pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                    type: string
+                  partnerCallbackCredentials:
+                    properties:
+                      clientId:
+                        pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                        type: string
+                      clientSecret:
+                        pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                        type: string
+                      tokenUrl:
+                        pattern: ^https?://[^\s/$.?#].[^\s]*$
+                        type: string
+                    required:
+                    - clientId
+                    - clientSecret
+                    - tokenUrl
+                    type: object
+                  partnerStatusLink:
+                    type: string
+                required:
+                - initialDate
+                - partnerStatusLink
+                type: object
+              fixedNetworkIds:
+                items:
+                  type: string
+                minItems: 1
+                type: array
+              mobileNetworkIds:
+                properties:
+                  mcc:
+                    pattern: ^\d{3}$
+                    type: string
+                  mncs:
+                    items:
+                      type: string
+                    minItems: 1
+                    type: array
+                type: object
+              updateData:
+                properties:
+                  assocAppPolicies:
+                    properties:
+                      appIdList:
+                        properties:
+                          appId:
+                            pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                            type: string
+                          appProvId:
+                            pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                            type: string
+                          zoneIds:
+                            items:
+                              type: string
+                            minItems: 1
+                            type: array
+                        required:
+                        - appId
+                        - appProvId
+                        type: object
+                      policyId:
+                        pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                        type: string
+                    required:
+                    - appIdList
+                    - policyId
+                    type: object
+                  assocOpsPolicies:
+                    properties:
+                      appIdList:
+                        properties:
+                          appId:
+                            pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                            type: string
+                          appProvId:
+                            pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                            type: string
+                          zoneIds:
+                            items:
+                              type: string
+                            minItems: 1
+                            type: array
+                        required:
+                        - appId
+                        - appProvId
+                        type: object
+                      policyId:
+                        pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                        type: string
+                    required:
+                    - appIdList
+                    - policyId
+                    type: object
+                  modificationDate:
+                    format: date-time
+                    type: string
+                  objectType:
+                    enum:
+                    - MOBILE_NETWORK_CODES
+                    - FIXED_NETWORK_CODES
+                    - OPS_POLICY
+                    - APP_POLICY
+                    type: string
+                  operationType:
+                    enum:
+                    - ADD_CODES
+                    - REMOVE_CODES
+                    - UPDATE_CODES
+                    - ADD_POLICY
+                    - REMOVE_POLICY
+                    - UPDATE_POLICY
+                    type: string
+                type: object
+            type: object
+          status:
+            description: ArtefactStatus defines the observed state of Artefact.
+            properties:
+              artefactBody:
+                properties:
+                  appProviderId:
+                    pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                    type: string
+                  artefactDescription:
+                    maxLength: 256
+                    type: string
+                  artefactDescriptorType:
+                    enum:
+                    - HELM
+                    - TERRAFORM
+                    - ANSIBLE
+                    - SHELL
+                    - COMPONENTSPEC
+                    type: string
+                  artefactFileFormat:
+                    enum:
+                    - ZIP
+                    - TAR
+                    - TEXT
+                    - TARGZ
+                    type: string
+                  artefactFileName:
+                    maxLength: 32
+                    minLength: 8
+                    type: string
+                  artefactName:
+                    pattern: ^[A-Za-z][A-Za-z0-9_]{7,31}$
+                    type: string
+                  artefactRepoLocation:
+                    properties:
+                      password:
+                        type: string
+                      repoURL:
+                        type: string
+                      token:
+                        type: string
+                      userName:
+                        type: string
+                    type: object
+                  artefactVersionInfo:
+                    type: string
+                  artefactVirtType:
+                    enum:
+                    - VM_TYPE
+                    - CONTAINER_TYPE
+                    type: string
+                  componentSpec:
+                    properties:
+                      commandLineParams:
+                        description: CommandLineParams descrive i parametri da riga
+                          di comando
+                        properties:
+                          command:
+                            items:
+                              description: CommandString definisce una stringa per
+                                gli array dei comandi
+                              type: string
+                            type: array
+                          commandArgs:
+                            items:
+                              description: CommandString definisce una stringa per
+                                gli array dei comandi
+                              type: string
+                            type: array
+                        required:
+                        - command
+                        type: object
+                      compEnvParams:
+                        items:
+                          properties:
+                            envValueType:
+                              enum:
+                              - USER_DEFINED
+                              - PLATFORM_DEFINED_DYNAMIC_PORT
+                              - PLATFORM_DEFINED_DNS
+                              - PLATFORM_DEFINED_IP
+                              type: string
+                            envVarName:
+                              pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,30}[A-Za-z0-9]$
+                              type: string
+                            envVarSrc:
+                              type: string
+                            envVarValue:
+                              pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,62}[A-Za-z0-9]$
+                              type: string
+                          required:
+                          - envValueType
+                          - envVarName
+                          type: object
+                        type: array
+                      componentName:
+                        pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,62}[A-Za-z0-9]$
+                        type: string
+                      computeResourceProfile:
+                        properties:
+                          cpuArchType:
+                            enum:
+                            - ISA_X86_64
+                            - ISA_ARM_64
+                            type: string
+                          cpuExclusivity:
+                            type: boolean
+                          diskStorage:
+                            format: int32
+                            type: integer
+                          fpga:
+                            format: int32
+                            type: integer
+                          gpu:
+                            items:
+                              properties:
+                                gpuMemory:
+                                  format: int32
+                                  type: integer
+                                gpuModeName:
+                                  type: string
+                                gpuVendorType:
+                                  enum:
+                                  - GPU_PROVIDER_NVIDIA
+                                  - GPU_PROVIDER_AMD
+                                  type: string
+                                numGPU:
+                                  format: int32
+                                  type: integer
+                              required:
+                              - gpuMemory
+                              - gpuModeName
+                              - gpuVendorType
+                              - numGPU
+                              type: object
+                            type: array
+                          hugepages:
+                            items:
+                              properties:
+                                number:
+                                  format: int32
+                                  type: integer
+                                pageSize:
+                                  enum:
+                                  - 2MB
+                                  - 4MB
+                                  - 1GB
+                                  type: string
+                              required:
+                              - number
+                              - pageSize
+                              type: object
+                            type: array
+                          memory:
+                            format: int64
+                            type: integer
+                          numCPU:
+                            pattern: ^\d+((\.\d{1,3})|(m))?$
+                            type: string
+                          vpu:
+                            format: int32
+                            type: integer
+                        required:
+                        - cpuArchType
+                        - memory
+                        - numCPU
+                        type: object
+                      deploymentConfig:
+                        properties:
+                          configType:
+                            enum:
+                            - DOCKER_COMPOSE
+                            - KUBERNETES_MANIFEST
+                            - CLOUD_INIT
+                            - HELM_VALUES
+                            type: string
+                          contents:
+                            type: string
+                        required:
+                        - configType
+                        - contents
+                        type: object
+                      exposedInterfaces:
+                        items:
+                          properties:
+                            InterfaceName:
+                              pattern: ^[a-z][a-z0-9]{3}$
+                              type: string
+                            commPort:
+                              format: int32
+                              maximum: 65535
+                              minimum: 1
+                              type: integer
+                            commProtocol:
+                              enum:
+                              - TCP
+                              - UDP
+                              - HTTP_HTTPS
+                              type: string
+                            interfaceId:
+                              pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,30}[A-Za-z0-9]$
+                              type: string
+                            network:
+                              pattern: ^[A-Za-z][A-Za-z0-9_]{6,30}[A-Za-z0-9]$
+                              type: string
+                            visibilityType:
+                              enum:
+                              - VISIBILITY_EXTERNAL
+                              - VISIBILITY_INTERNAL
+                              type: string
+                          required:
+                          - commPort
+                          - commProtocol
+                          - interfaceId
+                          - visibilityType
+                          type: object
+                        minItems: 1
+                        type: array
+                      images:
+                        items:
+                          format: uuid
+                          type: string
+                        minItems: 1
+                        type: array
+                      numOfInstances:
+                        format: int32
+                        type: integer
+                      persistentVolumes:
+                        items:
+                          properties:
+                            accessMode:
+                              default: RW
+                              enum:
+                              - RW
+                              - RO
+                              type: string
+                            ephemeralType:
+                              default: false
+                              type: boolean
+                            sharingPolicy:
+                              default: EXCLUSIVE
+                              enum:
+                              - EXCLUSIVE
+                              - SHARED
+                              type: string
+                            volumeMountPath:
+                              type: string
+                            volumeName:
+                              type: string
+                            volumeSize:
+                              enum:
+                              - 10Gi
+                              - 20Gi
+                              - 50Gi
+                              - 100Gi
+                              type: string
+                          required:
+                          - volumeMountPath
+                          - volumeName
+                          - volumeSize
+                          type: object
+                        minItems: 1
+                        type: array
+                      restartPolicy:
+                        enum:
+                        - RESTART_POLICY_ALWAYS
+                        - RESTART_POLICY_NEVER
+                        type: string
+                    required:
+                    - componentName
+                    - computeResourceProfile
+                    - images
+                    - numOfInstances
+                    - restartPolicy
+                    type: object
+                  repoType:
+                    enum:
+                    - PRIVATEREPO
+                    - PUBLICREPO
+                    - UPLOAD
+                    type: string
+                required:
+                - appProviderId
+                - artefactDescriptorType
+                - artefactName
+                - artefactVersionInfo
+                - artefactVirtType
+                - componentSpec
+                type: object
+              artefactId:
+                format: uuid
+                type: string
+              federationContextId:
+                pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                type: string
+            required:
+            - artefactId
+            - federationContextId
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
