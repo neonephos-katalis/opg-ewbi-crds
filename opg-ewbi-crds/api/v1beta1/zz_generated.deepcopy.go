@@ -223,7 +223,7 @@ func (in *AppIdList) DeepCopyInto(out *AppIdList) {
 	*out = *in
 	if in.ZoneIds != nil {
 		in, out := &in.ZoneIds, &out.ZoneIds
-		*out = make([]string, len(*in))
+		*out = make([]ZoneId, len(*in))
 		copy(*out, *in)
 	}
 }
@@ -1167,7 +1167,7 @@ func (in *FederationSpec) DeepCopyInto(out *FederationSpec) {
 	}
 	if in.FixedNetworkIds != nil {
 		in, out := &in.FixedNetworkIds, &out.FixedNetworkIds
-		*out = make([]string, len(*in))
+		*out = make([]FixedNetworkId, len(*in))
 		copy(*out, *in)
 	}
 }

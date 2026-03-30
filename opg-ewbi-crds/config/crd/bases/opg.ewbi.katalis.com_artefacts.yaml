@@ -40,6 +40,8 @@ spec:
             description: FederationSpec defines the desired state of Federation
             properties:
               capType:
+                description: The enumerated list of network capabilities that an OP
+                  can use for various services via SBI-NR.
                 enum:
                 - NW_CAP_CONN_STATE_CHANGE
                 - NW_CAP_LOCATION_RETRIEVAL
@@ -49,12 +51,19 @@ spec:
               federationData:
                 properties:
                   initialDate:
+                    description: Time zone info of the federation initiated by the
+                      originating OP
                     format: date-time
                     type: string
                   origOPCountryCode:
+                    description: ISO 3166-1 Alpha-2 code for the country of Partner
+                      operator
                     pattern: ^[A-Z]{2}$
                     type: string
                   origOPFederationId:
+                    description: Globally unique identifier allocated to an operator
+                      platform. This is valid and used only in context of MEC federation
+                      interface.
                     pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
                     type: string
                   partnerCallbackCredentials:
@@ -81,6 +90,8 @@ spec:
                 type: object
               fixedNetworkIds:
                 items:
+                  description: List of network identifier associated with the fixedline
+                    network of the operator platform.
                   type: string
                 minItems: 1
                 type: array
@@ -91,6 +102,7 @@ spec:
                     type: string
                   mncs:
                     items:
+                      pattern: ^\d{2,3}$
                       type: string
                     minItems: 1
                     type: array
@@ -100,15 +112,23 @@ spec:
                   assocAppPolicies:
                     properties:
                       appIdList:
+                        description: AppIdLocList
                         properties:
                           appId:
+                            description: (AppIdentifier) Identifier used to refer
+                              to an application.
                             pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
                             type: string
                           appProvId:
+                            description: (AppProviderId) UserId of the app provider.  Identifier
+                              is relevant only in context of this federation.
                             pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
                             type: string
                           zoneIds:
                             items:
+                              description: (ZoneIdentifier) Human readable name of
+                                the zone.
+                              pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
                               type: string
                             minItems: 1
                             type: array
@@ -117,6 +137,8 @@ spec:
                         - appProvId
                         type: object
                       policyId:
+                        description: (ApplPolicyIdentifier) Application-level Policy
+                          unique identifier"
                         pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
                         type: string
                     required:
@@ -126,15 +148,23 @@ spec:
                   assocOpsPolicies:
                     properties:
                       appIdList:
+                        description: AppIdLocList
                         properties:
                           appId:
+                            description: (AppIdentifier) Identifier used to refer
+                              to an application.
                             pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
                             type: string
                           appProvId:
+                            description: (AppProviderId) UserId of the app provider.  Identifier
+                              is relevant only in context of this federation.
                             pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
                             type: string
                           zoneIds:
                             items:
+                              description: (ZoneIdentifier) Human readable name of
+                                the zone.
+                              pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
                               type: string
                             minItems: 1
                             type: array
@@ -143,6 +173,8 @@ spec:
                         - appProvId
                         type: object
                       policyId:
+                        description: (ApplPolicyIdentifier) Application-level Policy
+                          unique identifier"
                         pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
                         type: string
                     required:
@@ -150,6 +182,8 @@ spec:
                     - policyId
                     type: object
                   modificationDate:
+                    description: Date and time of the federation modification by the
+                      originating partner OP
                     format: date-time
                     type: string
                   objectType:
