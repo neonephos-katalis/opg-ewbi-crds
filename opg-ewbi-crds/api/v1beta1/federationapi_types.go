@@ -38,6 +38,7 @@ type APIOperation struct {
 	// +kubebuilder:validation:Required
 	Href string `json:"href"`
 
+	// List of HTTP Methods supported for the given API category
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:MinItems=1
 	HttpMethods []string `json:"httpMethods"`
@@ -47,6 +48,7 @@ type APICategory struct {
 	// +kubebuilder:validation:Optional
 	K8sOperations *K8sOperations `json:"k8sOperations,omitempty"`
 
+	// List of endpoints for the given API category
 	// +kubebuilder:validation:Optional
 	// +kubebuilder:validation:MinItems=1
 	ApiOperations []APIOperation `json:"apiOperations,omitempty"`
@@ -74,6 +76,7 @@ type APIList struct {
 
 // FederationAPISpec defines the desired state of FederationAPI
 type FederationAPISpec struct {
+	// This identifier shall be provided by the partner OP on successful verification and validation of the federation create request and is used by partner op to identify this newly created federation context. Originating OP shall provide this identifier in any subsequent request towards the partner op.
 	// +kubebuilder:validation:Optional
 	// +kubebuilder:validation:Pattern=`^[A-Za-z0-9][A-Za-z0-9-]*$`
 	FederationContextId string `json:"federationContextId,omitempty"`
@@ -84,13 +87,16 @@ type FederationAPIStatus struct {
 	// +kubebuilder:validation:Optional
 	Api *APIList `json:"api,omitempty"`
 
+	// Current state of the artefact upload
 	// +kubebuilder:validation:Optional
 	// +kubebuilder:validation:Enum=Pending;Uploading;Uploaded;Failed
 	State string `json:"state,omitempty"`
 
+	// message indicating details about the current state
 	// +kubebuilder:validation:Optional
 	Message string `json:"message,omitempty"`
 
+	// Timestamp of the last status update
 	// +kubebuilder:validation:Optional
 	// +kubebuilder:validation:Format=date-time
 	LastUpdated string `json:"lastUpdated,omitempty"`
@@ -98,7 +104,7 @@ type FederationAPIStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
-// +kubebuilder:resource:shortName=api,scope=Namespaced
+// +kubebuilder:resource:shortName=fedapi,scope=Namespaced
 
 // FederationAPI is the Schema for the federationapis API
 type FederationAPI struct {

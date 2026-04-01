@@ -12,7 +12,7 @@ spec:
     listKind: FederationAPIList
     plural: federationapis
     shortNames:
-    - api
+    - fedapi
     singular: federationapi
   scope: Namespaced
   versions:
@@ -42,6 +42,11 @@ spec:
             description: spec defines the desired state of FederationAPI
             properties:
               federationContextId:
+                description: This identifier shall be provided by the partner OP on
+                  successful verification and validation of the federation create
+                  request and is used by partner op to identify this newly created
+                  federation context. Originating OP shall provide this identifier
+                  in any subsequent request towards the partner op.
                 pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
                 type: string
             type: object
@@ -53,11 +58,14 @@ spec:
                   artefactmanagement:
                     properties:
                       apiOperations:
+                        description: List of endpoints for the given API category
                         items:
                           properties:
                             href:
                               type: string
                             httpMethods:
+                              description: List of HTTP Methods supported for the
+                                given API category
                               items:
                                 type: string
                               minItems: 1
@@ -88,11 +96,14 @@ spec:
                   availabilityzone:
                     properties:
                       apiOperations:
+                        description: List of endpoints for the given API category
                         items:
                           properties:
                             href:
                               type: string
                             httpMethods:
+                              description: List of HTTP Methods supported for the
+                                given API category
                               items:
                                 type: string
                               minItems: 1
@@ -123,11 +134,14 @@ spec:
                   deploymentmanagement:
                     properties:
                       apiOperations:
+                        description: List of endpoints for the given API category
                         items:
                           properties:
                             href:
                               type: string
                             httpMethods:
+                              description: List of HTTP Methods supported for the
+                                given API category
                               items:
                                 type: string
                               minItems: 1
@@ -158,11 +172,14 @@ spec:
                   federationmanagement:
                     properties:
                       apiOperations:
+                        description: List of endpoints for the given API category
                         items:
                           properties:
                             href:
                               type: string
                             httpMethods:
+                              description: List of HTTP Methods supported for the
+                                given API category
                               items:
                                 type: string
                               minItems: 1
@@ -193,11 +210,14 @@ spec:
                   filemanagement:
                     properties:
                       apiOperations:
+                        description: List of endpoints for the given API category
                         items:
                           properties:
                             href:
                               type: string
                             httpMethods:
+                              description: List of HTTP Methods supported for the
+                                given API category
                               items:
                                 type: string
                               minItems: 1
@@ -228,11 +248,14 @@ spec:
                   onboardingmanagement:
                     properties:
                       apiOperations:
+                        description: List of endpoints for the given API category
                         items:
                           properties:
                             href:
                               type: string
                             httpMethods:
+                              description: List of HTTP Methods supported for the
+                                given API category
                               items:
                                 type: string
                               minItems: 1
@@ -264,11 +287,14 @@ spec:
                 - federationmanagement
                 type: object
               lastUpdated:
+                description: Timestamp of the last status update
                 format: date-time
                 type: string
               message:
+                description: message indicating details about the current state
                 type: string
               state:
+                description: Current state of the artefact upload
                 enum:
                 - Pending
                 - Uploading
