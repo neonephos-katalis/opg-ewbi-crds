@@ -42,47 +42,58 @@ type ImageRepoLocation struct {
 	// +kubebuilder:validation:Optional
 	RepoURL string `json:"repoURL,omitempty"`
 
+	// Username to access the repository
 	// +kubebuilder:validation:Optional
 	UserName string `json:"userName,omitempty"`
 
+	// Password to access the repository
 	// +kubebuilder:validation:Optional
 	Password string `json:"password,omitempty"`
 
+	// Authorization token to access the repository
 	// +kubebuilder:validation:Optional
 	Token string `json:"token,omitempty"`
 }
 
 type ImageBody struct {
+	// UserId of the app provider. Identifier is relevant only in context of this federation.
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Pattern=`^[A-Za-z][A-Za-z0-9_]{7,63}$`
 	AppProviderId string `json:"appProviderId"`
 
+	// Name of the image.   App provides specifies this name when image is uploaded on originating OP over NBI.
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Pattern=`^[A-Za-z][A-Za-z0-9_]{7,31}$`
 	ImageName string `json:"imageName"`
 
+	// Brief description about the image.
 	// +kubebuilder:validation:Optional
 	// +kubebuilder:validation:MinLength=8
 	// +kubebuilder:validation:MaxLength=128
 	ImageDescription string `json:"imageDescription,omitempty"`
 
+	// Image version information.
 	// +kubebuilder:validation:Required
 	ImageVersionInfo string `json:"imageVersionInfo"`
 
+	// Indicate if the image is Container image or VM image (QCOW2, OVA)
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Enum=QCOW2;DOCKER;OVA
 	ImageType string `json:"imageType"`
 
+	// MD5 checksum for VM and image-based images, sha256 digest for containers
 	// +kubebuilder:validation:Optional
 	Checksum string `json:"checksum,omitempty"`
 
 	// +kubebuilder:validation:Required
 	ImgOSType ImgOSType `json:"imgOSType"`
 
+	// CPU Instruction Set Architecture (ISA) E.g., Intel, Arm etc.
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Enum=ISA_X86_64;ISA_ARM_64
 	ImgInsSetArch string `json:"imgInsSetArch"`
 
+	// Image repository location. PUBLICREPO is used of public URLs like GitHub, Helm repo, docker registry etc., PRIVATEREPO is used for private repo managed by the application developer, UPLOAD is for the case when image is uploaded from MEC web portal.  OP should pull the image from ‘repoUrl' immediately after receiving the request and then send back the response. In case the repoURL corresponds to a docker registry, use docker v2 http api to do the pull.
 	// +kubebuilder:validation:Optional
 	// +kubebuilder:validation:Enum=PRIVATEREPO;PUBLICREPO;UPLOAD
 	RepoType string `json:"repoType,omitempty"`
@@ -97,10 +108,12 @@ type ImageBody struct {
 
 // ImageSpec defines the desired state of Image
 type ImageSpec struct {
+	// This identifier shall be provided by the partner OP on successful verification and validation of the federation create request and is used by partner op to identify this newly created federation context. Originating OP shall provide this identifier in any subsequent request towards the partner op.
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Pattern=`^[A-Za-z0-9][A-Za-z0-9-]*$`
 	FederationContextId string `json:"federationContextId"`
 
+	// A globally unique identifier associated with the image. Originating OP generates this identifier when image is uploaded over NBI.
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Format=uuid
 	ImageId string `json:"imageId"`
@@ -111,13 +124,16 @@ type ImageSpec struct {
 
 // ImageStatus defines the observed state of Image.
 type ImageStatus struct {
+	// Current state of the artefact upload
 	// +kubebuilder:validation:Optional
 	// +kubebuilder:validation:Enum=Pending;Uploading;Uploaded;Failed
 	State string `json:"state,omitempty"`
 
+	// Message indicating details about the current state
 	// +kubebuilder:validation:Optional
 	Message string `json:"message,omitempty"`
 
+	// Timestamp of the last status update
 	// +kubebuilder:validation:Optional
 	// +kubebuilder:validation:Format=date-time
 	LastUpdated string `json:"lastUpdated,omitempty"`
@@ -125,6 +141,7 @@ type ImageStatus struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+// +kubebuilder:resource:shortName=imgman,scope=Namespaced
 
 // Image is the Schema for the images API
 type Image struct {
@@ -142,7 +159,6 @@ type Image struct {
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
-// +kubebuilder:resource:shortName=image,scope=Namespaced
 
 // ImageList contains a list of Image
 type ImageList struct {
