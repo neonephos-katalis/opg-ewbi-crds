@@ -3,7 +3,7 @@ resources:
 - opg.ewbi_v1beta1_applicationonboarding.yaml
 - opg.ewbi_v1beta1_applicationdeployment.yaml
 - opg.ewbi_v1beta1_artefact.yaml
-- opg.ewbi_v1beta1_avaiabilityzone.yaml
+- opg.ewbi_v1beta1_availabilityzone.yaml
 - opg.ewbi_v1beta1_file.yaml
 - opg.ewbi_v1beta1_federation.yaml
 - opg.ewbi_v1beta1_federationapi.yaml

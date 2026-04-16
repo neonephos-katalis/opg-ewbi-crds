@@ -145,7 +145,7 @@ type ComponentSpec struct {
 	RestartPolicy string `json:"restartPolicy"`
 
 	// +kubebuilder:validation:Required
-	ComputeResourceProfile ComputeResourceInfo `json:"computeResourceProfile"` // Defined in  avaiabilityzone_types.go
+	ComputeResourceProfile ComputeResourceInfo `json:"computeResourceProfile"`
 
 	// +kubebuilder:validation:Optional
 	CommandLineParams *CommandLineParams `json:"commandLineParams,omitempty"`
@@ -211,10 +211,6 @@ type ArtefactBody struct {
 
 // ArtefactSpec defines the desired state of Artefact
 type ArtefactSpec struct {
-}
-
-// ArtefactStatus defines the observed state of Artefact.
-type ArtefactStatus struct {
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Pattern=`^[A-Za-z0-9][A-Za-z0-9-]*$`
 	FederationContextId string `json:"federationContextId"`
@@ -225,6 +221,16 @@ type ArtefactStatus struct {
 
 	// +kubebuilder:validation:Optional
 	ArtefactBody *ArtefactBody `json:"artefactBody,omitempty"`
+}
+
+// ArtefactStatus defines the observed state of Artefact.
+type ArtefactStatus struct {
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Enum=Pending;Uploading;Uploaded;Failed
+	State string `json:"state,omitempty"`
+	// +kubebuilder:validation:Optional
+	Message     string      `json:"message,omitempty"`
+	LastUpdated metav1.Time `json:"lastUpdated,omitempty"`
 }
 
 // +kubebuilder:object:root=true

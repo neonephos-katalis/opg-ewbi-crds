@@ -11,12 +11,12 @@ metadata:
   labels:
     app.kubernetes.io/name: opg-ewbi-crds
     app.kubernetes.io/managed-by: kustomize
-  name: avaiabilityzone-editor-role
+  name: availabilityzone-editor-role
 rules:
 - apiGroups:
   - opg.ewbi.katalis.com
   resources:
-  - avaiabilityzones
+  - availabilityzones
   verbs:
   - create
   - delete
@@ -28,6 +28,6 @@ rules:
 - apiGroups:
   - opg.ewbi.katalis.com
   resources:
-  - avaiabilityzones/status
+  - availabilityzones/status
   verbs:
   - get

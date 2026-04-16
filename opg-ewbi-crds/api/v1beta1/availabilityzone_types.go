@@ -216,8 +216,8 @@ type ZoneServiceLevelObjsInfo struct {
 	ThroughputRanges ThroughputRanges `json:"throughputRanges"`
 }
 
-// AvaiabilityZoneSpec defines the desired state of AvaiabilityZone
-type AvaiabilityZoneSpec struct {
+// AvailabilityZoneSpec defines the desired state of AvailabilityZone
+type AvailabilityZoneSpec struct {
 	// This identifier shall be provided by the partner OP on successful verification and validation of the federation create request and is used by partner op to identify this newly created federation context. Originating OP shall provide this identifier in any subsequent request towards the partner op.
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Pattern=`^[A-Za-z0-9][A-Za-z0-9-]*$`
@@ -232,8 +232,8 @@ type AvaiabilityZoneSpec struct {
 	Link string `json:"link,omitempty"`
 }
 
-// AvaiabilityZoneStatus defines the observed state of AvaiabilityZone.
-type AvaiabilityZoneStatus struct {
+// AvailabilityZoneStatus defines the observed state of AvailabilityZone.
+type AvailabilityZoneStatus struct {
 	// Resources exclusively reserved for the originator OP.
 	// +kubebuilder:validation:Optional
 	// +kubebuilder:validation:MinItems=1
@@ -261,26 +261,26 @@ type AvaiabilityZoneStatus struct {
 // +kubebuilder:resource:shortName=avazone,scope=Namespaced
 // +kubebuilder:printcolumn:name="FederationContextId",type=string,JSONPath=`.spec.federationContextId`
 
-// AvaiabilityZone is the Schema for the avaiabilityzones API
-type AvaiabilityZone struct {
+// AvailabilityZone is the Schema for the availabilityzones API
+type AvailabilityZone struct {
 	metav1.TypeMeta `json:",inline"`
 	// +optional
 	metav1.ObjectMeta `json:"metadata,omitzero"`
 	// +required
-	Spec AvaiabilityZoneSpec `json:"spec"`
+	Spec AvailabilityZoneSpec `json:"spec"`
 	// +optional
-	Status AvaiabilityZoneStatus `json:"status,omitzero"`
+	Status AvailabilityZoneStatus `json:"status,omitzero"`
 }
 
 // +kubebuilder:object:root=true
 
-// AvaiabilityZoneList contains a list of AvaiabilityZone
-type AvaiabilityZoneList struct {
+// AvailabilityZoneList contains a list of AvailabilityZone
+type AvailabilityZoneList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitzero"`
-	Items           []AvaiabilityZone `json:"items"`
+	Items           []AvailabilityZone `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&AvaiabilityZone{}, &AvaiabilityZoneList{})
+	SchemeBuilder.Register(&AvailabilityZone{}, &AvailabilityZoneList{})
 }

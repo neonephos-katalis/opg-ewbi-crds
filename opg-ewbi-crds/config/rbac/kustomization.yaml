@@ -31,9 +31,9 @@ resources:
 - file_admin_role.yaml
 - file_editor_role.yaml
 - file_viewer_role.yaml
-- avaiabilityzone_admin_role.yaml
-- avaiabilityzone_editor_role.yaml
-- avaiabilityzone_viewer_role.yaml
+- availabilityzone_admin_role.yaml
+- availabilityzone_editor_role.yaml
+- availabilityzone_viewer_role.yaml
 - artefact_admin_role.yaml
 - artefact_editor_role.yaml
 - artefact_viewer_role.yaml

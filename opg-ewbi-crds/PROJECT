@@ -38,7 +38,7 @@ resources:
     namespaced: true
   domain: katalis.com
   group: opg.ewbi
-  kind: AvaiabilityZone
+  kind: AvailabilityZone
   path: katalis.com/opg-ewbi/api/v1beta1
   version: v1beta1
 - api:

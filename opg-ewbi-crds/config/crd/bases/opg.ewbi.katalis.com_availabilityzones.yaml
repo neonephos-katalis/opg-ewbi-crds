@@ -4,16 +4,16 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.20.1
-  name: avaiabilityzones.opg.ewbi.katalis.com
+  name: availabilityzones.opg.ewbi.katalis.com
 spec:
   group: opg.ewbi.katalis.com
   names:
-    kind: AvaiabilityZone
-    listKind: AvaiabilityZoneList
-    plural: avaiabilityzones
+    kind: AvailabilityZone
+    listKind: AvailabilityZoneList
+    plural: availabilityzones
     shortNames:
     - avazone
-    singular: avaiabilityzone
+    singular: availabilityzone
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
@@ -23,7 +23,7 @@ spec:
     name: v1beta1
     schema:
       openAPIV3Schema:
-        description: AvaiabilityZone is the Schema for the avaiabilityzones API
+        description: AvailabilityZone is the Schema for the availabilityzones API
         properties:
           apiVersion:
             description: |-
@@ -43,7 +43,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: AvaiabilityZoneSpec defines the desired state of AvaiabilityZone
+            description: AvailabilityZoneSpec defines the desired state of AvailabilityZone
             properties:
               federationContextId:
                 description: This identifier shall be provided by the partner OP on
@@ -63,7 +63,7 @@ spec:
             - federationContextId
             type: object
           status:
-            description: AvaiabilityZoneStatus defines the observed state of AvaiabilityZone.
+            description: AvailabilityZoneStatus defines the observed state of AvailabilityZone.
             properties:
               computeResourceQuotaLimits:
                 description: Max quota on resources partner OP allows over reserved

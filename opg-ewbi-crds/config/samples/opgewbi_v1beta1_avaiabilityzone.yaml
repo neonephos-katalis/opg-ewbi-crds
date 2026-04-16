@@ -1,10 +1,10 @@
 apiVersion: opg.ewbi.katalis.com/v1beta1
-kind: AvaiabilityZone
+kind: AvailabilityZone
 metadata:
   labels:
     app.kubernetes.io/name: opg-ewbi-crds
     app.kubernetes.io/managed-by: kustomize
-  name: avaiabilityzone-sample
+  name: availabilityzone-sample
   namespace: guest
 spec:
   federationContextId: f27e71c7-e701-27f2-59b6-bf2de514ce02
