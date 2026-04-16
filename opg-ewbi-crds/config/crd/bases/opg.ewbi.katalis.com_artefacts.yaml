@@ -1,0 +1,231 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.1
+  name: artefacts.opg.ewbi.katalis.com
+spec:
+  group: opg.ewbi.katalis.com
+  names:
+    kind: Artefact
+    listKind: ArtefactList
+    plural: artefacts
+    singular: artefact
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: Artefact is the Schema for the artefacts API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: FederationSpec defines the desired state of Federation
+            properties:
+              capType:
+                description: The enumerated list of network capabilities that an OP
+                  can use for various services via SBI-NR.
+                enum:
+                - NW_CAP_CONN_STATE_CHANGE
+                - NW_CAP_LOCATION_RETRIEVAL
+                - NW_CAP_USERPLANE_MGMT_EVENTS
+                - NW_CAP_DYNAMIC_QOS
+                type: string
+              federationData:
+                properties:
+                  initialDate:
+                    description: Time zone info of the federation initiated by the
+                      originating OP
+                    format: date-time
+                    type: string
+                  origOPCountryCode:
+                    description: ISO 3166-1 Alpha-2 code for the country of Partner
+                      operator
+                    pattern: ^[A-Z]{2}$
+                    type: string
+                  origOPFederationId:
+                    description: Globally unique identifier allocated to an operator
+                      platform. This is valid and used only in context of MEC federation
+                      interface.
+                    pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                    type: string
+                  partnerCallbackCredentials:
+                    properties:
+                      clientId:
+                        pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                        type: string
+                      clientSecret:
+                        pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                        type: string
+                      tokenUrl:
+                        pattern: ^https?://[^\s/$.?#].[^\s]*$
+                        type: string
+                    required:
+                    - clientId
+                    - clientSecret
+                    - tokenUrl
+                    type: object
+                  partnerStatusLink:
+                    type: string
+                required:
+                - initialDate
+                - partnerStatusLink
+                type: object
+              fixedNetworkIds:
+                items:
+                  description: List of network identifier associated with the fixedline
+                    network of the operator platform.
+                  type: string
+                minItems: 1
+                type: array
+              mobileNetworkIds:
+                properties:
+                  mcc:
+                    pattern: ^\d{3}$
+                    type: string
+                  mncs:
+                    items:
+                      pattern: ^\d{2,3}$
+                      type: string
+                    minItems: 1
+                    type: array
+                type: object
+              updateData:
+                properties:
+                  assocAppPolicies:
+                    properties:
+                      appIdList:
+                        description: AppIdLocList
+                        properties:
+                          appId:
+                            description: (AppIdentifier) Identifier used to refer
+                              to an application.
+                            pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                            type: string
+                          appProvId:
+                            description: (AppProviderId) UserId of the app provider.  Identifier
+                              is relevant only in context of this federation.
+                            pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                            type: string
+                          zoneIds:
+                            items:
+                              description: (ZoneIdentifier) Human readable name of
+                                the zone.
+                              pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                              type: string
+                            minItems: 1
+                            type: array
+                        required:
+                        - appId
+                        - appProvId
+                        type: object
+                      policyId:
+                        description: (ApplPolicyIdentifier) Application-level Policy
+                          unique identifier"
+                        pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                        type: string
+                    required:
+                    - appIdList
+                    - policyId
+                    type: object
+                  assocOpsPolicies:
+                    properties:
+                      appIdList:
+                        description: AppIdLocList
+                        properties:
+                          appId:
+                            description: (AppIdentifier) Identifier used to refer
+                              to an application.
+                            pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                            type: string
+                          appProvId:
+                            description: (AppProviderId) UserId of the app provider.  Identifier
+                              is relevant only in context of this federation.
+                            pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                            type: string
+                          zoneIds:
+                            items:
+                              description: (ZoneIdentifier) Human readable name of
+                                the zone.
+                              pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                              type: string
+                            minItems: 1
+                            type: array
+                        required:
+                        - appId
+                        - appProvId
+                        type: object
+                      policyId:
+                        description: (ApplPolicyIdentifier) Application-level Policy
+                          unique identifier"
+                        pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                        type: string
+                    required:
+                    - appIdList
+                    - policyId
+                    type: object
+                  modificationDate:
+                    description: Date and time of the federation modification by the
+                      originating partner OP
+                    format: date-time
+                    type: string
+                  objectType:
+                    enum:
+                    - MOBILE_NETWORK_CODES
+                    - FIXED_NETWORK_CODES
+                    - OPS_POLICY
+                    - APP_POLICY
+                    type: string
+                  operationType:
+                    enum:
+                    - ADD_CODES
+                    - REMOVE_CODES
+                    - UPDATE_CODES
+                    - ADD_POLICY
+                    - REMOVE_POLICY
+                    - UPDATE_POLICY
+                    type: string
+                type: object
+            type: object
+          status:
+            description: ArtefactStatus defines the observed state of Artefact.
+            properties:
+              lastUpdated:
+                format: date-time
+                type: string
+              message:
+                type: string
+              state:
+                enum:
+                - Pending
+                - Uploading
+                - Uploaded
+                - Failed
+                type: string
+            required:
+            - state
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

@@ -1,0 +1,10 @@
+apiVersion: opg.ewbi.katalis.com/v1beta1
+kind: FederationAPI
+metadata:
+  labels:
+    app.kubernetes.io/name: opg-ewbi-crds
+    app.kubernetes.io/managed-by: kustomize
+  name: federationapi-sample
+
+spec:
+  # TODO(user): Add fields here

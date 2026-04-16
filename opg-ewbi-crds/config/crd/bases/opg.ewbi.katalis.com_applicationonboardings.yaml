@@ -1,0 +1,206 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.1
+  name: applicationonboardings.opg.ewbi.katalis.com
+spec:
+  group: opg.ewbi.katalis.com
+  names:
+    kind: ApplicationOnboarding
+    listKind: ApplicationOnboardingList
+    plural: applicationonboardings
+    shortNames:
+    - onboard
+    singular: applicationonboarding
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: ApplicationOnboarding is the Schema for the applicationonboardings
+          API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ApplicationOnboardingSpec defines the desired state of ApplicationOnboarding
+            properties:
+              appInfo:
+                properties:
+                  appComponentSpecs:
+                    items:
+                      properties:
+                        artefactId:
+                          format: uuid
+                          type: string
+                        componentName:
+                          pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,62}[A-Za-z0-9]$
+                          type: string
+                        serviceNameEW:
+                          pattern: ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])\.)*([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$
+                          type: string
+                        serviceNameNB:
+                          pattern: ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])\.)*([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$
+                          type: string
+                      type: object
+                    minItems: 1
+                    type: array
+                  appDeploymentZones:
+                    items:
+                      properties:
+                        countryCode:
+                          pattern: ^[A-Z]{2}$
+                          type: string
+                        zoneId:
+                          pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                          type: string
+                      type: object
+                    minItems: 1
+                    type: array
+                  appId:
+                    pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                    type: string
+                  appMetaData:
+                    properties:
+                      accessToken:
+                        type: string
+                      appDescription:
+                        maxLength: 256
+                        minLength: 16
+                        type: string
+                      appName:
+                        pattern: ^[A-Za-z][A-Za-z0-9_]{7,31}$
+                        type: string
+                      category:
+                        enum:
+                        - IOT
+                        - HEALTH_CARE
+                        - GAMING
+                        - VIRTUAL_REALITY
+                        - SOCIALIZING
+                        - SURVEILLANCE
+                        - ENTERTAINMENT
+                        - CONNECTIVITY
+                        - PRODUCTIVITY
+                        - SECURITY
+                        - INDUSTRIAL
+                        - EDUCATION
+                        - OTHERS
+                        type: string
+                      mobilitySupport:
+                        default: false
+                        type: boolean
+                      version:
+                        type: string
+                    required:
+                    - accessToken
+                    - appName
+                    - version
+                    type: object
+                  appProviderId:
+                    pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                    type: string
+                  appQoSProfile:
+                    properties:
+                      appProvisioning:
+                        default: true
+                        type: boolean
+                      bandwidthRequired:
+                        format: int32
+                        minimum: 1
+                        type: integer
+                      latencyConstraints:
+                        enum:
+                        - NONE
+                        - LOW
+                        - ULTRALOW
+                        type: string
+                      multiUserClients:
+                        enum:
+                        - APP_TYPE_SINGLE_USER
+                        - APP_TYPE_MULTI_USER
+                        type: string
+                      noOfUsersPerAppInst:
+                        default: 1
+                        format: int32
+                        type: integer
+                    required:
+                    - latencyConstraints
+                    type: object
+                  appStatusCallbackLink:
+                    type: string
+                  edgeAppFQDN:
+                    type: string
+                  onboardStatusInfo:
+                    enum:
+                    - PENDING
+                    - ONBOARDED
+                    - DEBOARDING
+                    - REMOVED
+                    - FAILED
+                    type: string
+                required:
+                - appId
+                type: object
+              federationContextId:
+                pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                type: string
+              zoneSettings:
+                items:
+                  properties:
+                    forbid:
+                      type: boolean
+                    zoneId:
+                      items:
+                        pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                        type: string
+                      minItems: 1
+                      type: array
+                  type: object
+                minItems: 1
+                type: array
+            required:
+            - appInfo
+            - federationContextId
+            type: object
+          status:
+            description: ApplicationOnboardingStatus defines the observed state of
+              ApplicationOnboarding.
+            properties:
+              lastUpdated:
+                format: date-time
+                type: string
+              message:
+                type: string
+              state:
+                enum:
+                - Pending
+                - Uploading
+                - Uploaded
+                - Failed
+                type: string
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
