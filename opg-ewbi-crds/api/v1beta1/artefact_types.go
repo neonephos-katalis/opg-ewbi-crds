@@ -242,7 +242,7 @@ type Artefact struct {
 	// +optional
 	metav1.ObjectMeta `json:"metadata,omitzero"`
 	// +required
-	Spec FederationSpec `json:"spec"`
+	Spec ArtefactSpec `json:"spec"`
 
 	// +optional
 	Status ArtefactStatus `json:"status,omitzero"`
