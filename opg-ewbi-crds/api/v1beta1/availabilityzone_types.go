@@ -27,7 +27,7 @@ type GPUResource struct {
 	// +kubebuilder:example=Nvidia
 	GpuVendorType string `json:"gpuVendorType"`
 
-	// Model name corresponding to vendorType may include info e.g. for NVIDIA, model name could be “Tesla M60”, “Tesla V100” etc.
+	// Model name corresponding to vendorType may include info e.g. for NVIDIA, model name could be "Tesla M60", "Tesla V100" etc.
 	// +kubebuilder:validation:Required
 	GpuModeName string `json:"gpuModeName"`
 

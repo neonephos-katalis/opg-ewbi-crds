@@ -96,8 +96,8 @@ spec:
                             type: integer
                           gpuModeName:
                             description: Model name corresponding to vendorType may
-                              include info e.g. for NVIDIA, model name could be “Tesla
-                              M60”, “Tesla V100” etc.
+                              include info e.g. for NVIDIA, model name could be "Tesla
+                              M60", "Tesla V100" etc.
                             type: string
                           gpuVendorType:
                             description: GPU vendor name e.g. NVIDIA, AMD etc.
@@ -191,8 +191,8 @@ spec:
                             type: integer
                           gpuModeName:
                             description: Model name corresponding to vendorType may
-                              include info e.g. for NVIDIA, model name could be “Tesla
-                              M60”, “Tesla V100” etc.
+                              include info e.g. for NVIDIA, model name could be "Tesla
+                              M60", "Tesla V100" etc.
                             type: string
                           gpuVendorType:
                             description: GPU vendor name e.g. NVIDIA, AMD etc.
@@ -354,8 +354,8 @@ spec:
                             type: integer
                           gpuModeName:
                             description: Model name corresponding to vendorType may
-                              include info e.g. for NVIDIA, model name could be “Tesla
-                              M60”, “Tesla V100” etc.
+                              include info e.g. for NVIDIA, model name could be "Tesla
+                              M60", "Tesla V100" etc.
                             type: string
                           gpuVendorType:
                             description: GPU vendor name e.g. NVIDIA, AMD etc.
