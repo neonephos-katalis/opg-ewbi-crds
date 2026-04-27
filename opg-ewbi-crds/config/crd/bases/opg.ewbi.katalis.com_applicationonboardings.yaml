@@ -12,7 +12,7 @@ spec:
     listKind: ApplicationOnboardingList
     plural: applicationonboardings
     shortNames:
-    - onboard
+    - apponb
     singular: applicationonboarding
   scope: Namespaced
   versions:
@@ -43,52 +43,86 @@ spec:
             description: ApplicationOnboardingSpec defines the desired state of ApplicationOnboarding
             properties:
               appInfo:
+                description: Details about application compute resource requirements,
+                  associated artefacts, QoS profile and regions where application
+                  shall be made available etc.
                 properties:
                   appComponentSpecs:
                     items:
                       properties:
                         artefactId:
+                          description: A globally unique identifier associated with
+                            the artefact. Originating OP generates this identifier
+                            when artefact is submitted over NBI.
                           format: uuid
                           type: string
                         componentName:
+                          description: Must be a valid RFC 1035 label name.  Component
+                            name must be unique with an application
                           pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,62}[A-Za-z0-9]$
                           type: string
                         serviceNameEW:
+                          description: Must be a valid RFC 1035 label name. This defines
+                            the DNS name via which the component can be accessed via
+                            peer components. Access via serviceNameEW is open on all
+                            ports.   Platform shall not expose serviceNameEW externally
+                            outside edge.
                           pattern: ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])\.)*([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$
                           type: string
                         serviceNameNB:
+                          description: Must be a valid RFC 1035 label name. This defines
+                            the DNS name via which the component can be accessed over
+                            NBI. Access via     serviceNameNB is restricted on specific
+                            ports. Platform shall expose component access externally
+                            via this DNS name
                           pattern: ^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])\.)*([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9])$
                           type: string
                       type: object
                     minItems: 1
                     type: array
                   appDeploymentZones:
+                    description: Details about partner OP zones where the application
+                      should be made available;  This field when specified will instruct
+                      the OP to restrict application instantiation only on the listed
+                      zones.
                     items:
                       properties:
                         countryCode:
+                          description: ISO 3166-1 Alpha-2 code for the country of
+                            Partner operator
                           pattern: ^[A-Z]{2}$
                           type: string
                         zoneId:
+                          description: Human readable name of the zone.
                           pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
                           type: string
                       type: object
                     minItems: 1
                     type: array
                   appId:
+                    description: Identifier used to refer to an application.
                     pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
                     type: string
                   appMetaData:
+                    description: Application metadata details
                     properties:
                       accessToken:
+                        description: An application Access key, to be used with UNI
+                          interface to authorize UCs Access to a given application
                         type: string
                       appDescription:
+                        description: Brief application description provided by application
+                          provider
                         maxLength: 256
                         minLength: 16
                         type: string
                       appName:
+                        description: Name of the application. Application provider
+                          define a human readable name for the application
                         pattern: ^[A-Za-z][A-Za-z0-9_]{7,31}$
                         type: string
                       category:
+                        description: Possible categorization of the application
                         enum:
                         - IOT
                         - HEALTH_CARE
@@ -106,8 +140,11 @@ spec:
                         type: string
                       mobilitySupport:
                         default: false
+                        description: Indicates if an application is sensitive to user
+                          mobility and can be relocated. Default is "FALSE"
                         type: boolean
                       version:
+                        description: Version info of the application
                         type: string
                     required:
                     - accessToken
@@ -115,31 +152,48 @@ spec:
                     - version
                     type: object
                   appProviderId:
+                    description: UserId of the app provider.  Identifier is relevant
+                      only in context of this federation.
                     pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
                     type: string
                   appQoSProfile:
+                    description: Parameters corresponding to the performance constraints,
+                      tenancy details etc.
                     properties:
                       appProvisioning:
                         default: true
+                        description: Define if application can be instantiated or
+                          not
                         type: boolean
                       bandwidthRequired:
+                        description: Data transfer bandwidth requirement (minimum
+                          limit) for the application. It should in Mbits/sec
                         format: int32
                         minimum: 1
                         type: integer
                       latencyConstraints:
+                        description: Latency requirements for the application.Allowed
+                          values (non-standardized) are none, low and ultra-low. Ultra-Low
+                          may corresponds to range 15 - 30 msec, Low correspond to
+                          range 30 - 50 msec. None means 51 and above
                         enum:
                         - NONE
                         - LOW
                         - ULTRALOW
                         type: string
                       multiUserClients:
+                        description: Single user type application are designed to
+                          serve just one client. Multi user type application is designed
+                          to serve multiple clients
                         enum:
                         - APP_TYPE_SINGLE_USER
                         - APP_TYPE_MULTI_USER
                         type: string
                       noOfUsersPerAppInst:
                         default: 1
-                        format: int32
+                        description: Maximum no of clients that can connect to an
+                          instance of this application. This parameter is relevant
+                          only for application of type multi user
                         type: integer
                     required:
                     - latencyConstraints
@@ -147,8 +201,14 @@ spec:
                   appStatusCallbackLink:
                     type: string
                   edgeAppFQDN:
+                    description: DNS FQDN assigned to application instances in an
+                      availability zone. User Clients can resolve the FQDN to communicate
+                      with the edge instances of the application
                     type: string
                   onboardStatusInfo:
+                    description: Defines change in application status. This change
+                      could be related to application itself or an application instance
+                      status
                     enum:
                     - PENDING
                     - ONBOARDED
@@ -160,15 +220,24 @@ spec:
                 - appId
                 type: object
               federationContextId:
+                description: This identifier shall be provided by the partner OP on
+                  successful verification and validation of the federation create
+                  request and is used by partner op to identify this newly created
+                  federation context. Originating OP shall provide this identifier
+                  in any subsequent request towards the partner op.
                 pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
                 type: string
               zoneSettings:
                 items:
                   properties:
                     forbid:
+                      description: Value 'true' will forbid application instantiation
+                        on this zone.  No new instance of the application can be created
+                        on this zone.
                       type: boolean
                     zoneId:
                       items:
+                        description: Human readable name of the zone.
                         pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
                         type: string
                       minItems: 1
@@ -185,11 +254,14 @@ spec:
               ApplicationOnboarding.
             properties:
               lastUpdated:
+                description: Timestamp of the last status update
                 format: date-time
                 type: string
               message:
+                description: Message indicating details about the current state
                 type: string
               state:
+                description: Current state of the artefact upload
                 enum:
                 - Pending
                 - Uploading
