@@ -1,0 +1,311 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.1
+  name: federationapis.opg.ewbi.katalis.com
+spec:
+  group: opg.ewbi.katalis.com
+  names:
+    kind: FederationAPI
+    listKind: FederationAPIList
+    plural: federationapis
+    shortNames:
+    - fedapi
+    singular: federationapi
+  scope: Namespaced
+  versions:
+  - name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: FederationAPI is the Schema for the federationapis API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: spec defines the desired state of FederationAPI
+            properties:
+              federationContextId:
+                description: This identifier shall be provided by the partner OP on
+                  successful verification and validation of the federation create
+                  request and is used by partner op to identify this newly created
+                  federation context. Originating OP shall provide this identifier
+                  in any subsequent request towards the partner op.
+                pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                type: string
+            type: object
+          status:
+            description: status defines the observed state of FederationAPI
+            properties:
+              api:
+                properties:
+                  artefactmanagement:
+                    properties:
+                      apiOperations:
+                        description: List of endpoints for the given API category
+                        items:
+                          properties:
+                            href:
+                              type: string
+                            httpMethods:
+                              description: List of HTTP Methods supported for the
+                                given API category
+                              items:
+                                type: string
+                              minItems: 1
+                              type: array
+                          required:
+                          - href
+                          - httpMethods
+                          type: object
+                        minItems: 1
+                        type: array
+                      k8sOperations:
+                        properties:
+                          group:
+                            type: string
+                          href:
+                            type: string
+                          plural:
+                            type: string
+                          version:
+                            type: string
+                        required:
+                        - group
+                        - href
+                        - plural
+                        - version
+                        type: object
+                    type: object
+                  availabilityzone:
+                    properties:
+                      apiOperations:
+                        description: List of endpoints for the given API category
+                        items:
+                          properties:
+                            href:
+                              type: string
+                            httpMethods:
+                              description: List of HTTP Methods supported for the
+                                given API category
+                              items:
+                                type: string
+                              minItems: 1
+                              type: array
+                          required:
+                          - href
+                          - httpMethods
+                          type: object
+                        minItems: 1
+                        type: array
+                      k8sOperations:
+                        properties:
+                          group:
+                            type: string
+                          href:
+                            type: string
+                          plural:
+                            type: string
+                          version:
+                            type: string
+                        required:
+                        - group
+                        - href
+                        - plural
+                        - version
+                        type: object
+                    type: object
+                  deploymentmanagement:
+                    properties:
+                      apiOperations:
+                        description: List of endpoints for the given API category
+                        items:
+                          properties:
+                            href:
+                              type: string
+                            httpMethods:
+                              description: List of HTTP Methods supported for the
+                                given API category
+                              items:
+                                type: string
+                              minItems: 1
+                              type: array
+                          required:
+                          - href
+                          - httpMethods
+                          type: object
+                        minItems: 1
+                        type: array
+                      k8sOperations:
+                        properties:
+                          group:
+                            type: string
+                          href:
+                            type: string
+                          plural:
+                            type: string
+                          version:
+                            type: string
+                        required:
+                        - group
+                        - href
+                        - plural
+                        - version
+                        type: object
+                    type: object
+                  federationmanagement:
+                    properties:
+                      apiOperations:
+                        description: List of endpoints for the given API category
+                        items:
+                          properties:
+                            href:
+                              type: string
+                            httpMethods:
+                              description: List of HTTP Methods supported for the
+                                given API category
+                              items:
+                                type: string
+                              minItems: 1
+                              type: array
+                          required:
+                          - href
+                          - httpMethods
+                          type: object
+                        minItems: 1
+                        type: array
+                      k8sOperations:
+                        properties:
+                          group:
+                            type: string
+                          href:
+                            type: string
+                          plural:
+                            type: string
+                          version:
+                            type: string
+                        required:
+                        - group
+                        - href
+                        - plural
+                        - version
+                        type: object
+                    type: object
+                  filemanagement:
+                    properties:
+                      apiOperations:
+                        description: List of endpoints for the given API category
+                        items:
+                          properties:
+                            href:
+                              type: string
+                            httpMethods:
+                              description: List of HTTP Methods supported for the
+                                given API category
+                              items:
+                                type: string
+                              minItems: 1
+                              type: array
+                          required:
+                          - href
+                          - httpMethods
+                          type: object
+                        minItems: 1
+                        type: array
+                      k8sOperations:
+                        properties:
+                          group:
+                            type: string
+                          href:
+                            type: string
+                          plural:
+                            type: string
+                          version:
+                            type: string
+                        required:
+                        - group
+                        - href
+                        - plural
+                        - version
+                        type: object
+                    type: object
+                  onboardingmanagement:
+                    properties:
+                      apiOperations:
+                        description: List of endpoints for the given API category
+                        items:
+                          properties:
+                            href:
+                              type: string
+                            httpMethods:
+                              description: List of HTTP Methods supported for the
+                                given API category
+                              items:
+                                type: string
+                              minItems: 1
+                              type: array
+                          required:
+                          - href
+                          - httpMethods
+                          type: object
+                        minItems: 1
+                        type: array
+                      k8sOperations:
+                        properties:
+                          group:
+                            type: string
+                          href:
+                            type: string
+                          plural:
+                            type: string
+                          version:
+                            type: string
+                        required:
+                        - group
+                        - href
+                        - plural
+                        - version
+                        type: object
+                    type: object
+                required:
+                - federationmanagement
+                type: object
+              lastUpdated:
+                description: Timestamp of the last status update
+                format: date-time
+                type: string
+              message:
+                description: message indicating details about the current state
+                type: string
+              state:
+                description: Current state of the artefact upload
+                enum:
+                - Pending
+                - Uploading
+                - Uploaded
+                - Failed
+                type: string
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
