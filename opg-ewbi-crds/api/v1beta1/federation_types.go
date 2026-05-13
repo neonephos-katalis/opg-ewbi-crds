@@ -147,11 +147,16 @@ type FederationSpec struct {
 }
 
 // +kubebuilder:validation:Pattern=`^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$`
+// +kubebuilder:example=198.51.100.1
 type IPv4String string
 
+// +kubebuilder:validation:Format=ipv6
+// +kubebuilder:validation:Pattern=`^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))$`
+// +kubebuilder:example=2001:db8:85a3::8a2e:370:7334
 type IPv6String string
 
 // Service Endpoint
+// +kubebuilder:validation:XValidation:rule="has(self.fqdn) || has(self.ipv4Addresses) || has(self.ipv6Addresses)",message="at least one among fqdn, ipv4Addresses, ipv6Addresses must be set"
 type ServiceEndpoint struct {
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Enum=edge;lcm

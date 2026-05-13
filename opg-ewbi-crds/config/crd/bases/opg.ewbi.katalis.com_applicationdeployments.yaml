@@ -140,9 +140,9 @@ spec:
                           minItems: 1
                           type: array
                         ipv6Addresses:
-                          description: 'Nota: Le regole pattern ''allOf'' originali
-                            andranno verificate tramite Webhook.'
                           items:
+                            format: ipv6
+                            pattern: ^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))$
                             type: string
                           minItems: 1
                           type: array
@@ -152,6 +152,10 @@ spec:
                       required:
                       - port
                       type: object
+                      x-kubernetes-validations:
+                      - message: at least one among fqdn, ipv4Addresses, ipv6Addresses
+                          must be set
+                        rule: has(self.fqdn) || has(self.ipv4Addresses) || has(self.ipv6Addresses)
                     interfaceId:
                       description: This is the interface identifier that app provider
                         defines when application is onboarded.
