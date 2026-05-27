@@ -66,6 +66,10 @@ test: manifests generate fmt vet setup-envtest ## Run tests.
 # CertManager is installed by default; skip with:
 # - CERT_MANAGER_INSTALL_SKIP=true
 KIND_CLUSTER ?= opg-ewbi-crds-test-e2e
+TEST_NAMESPACE ?= guest
+FEDERATION_TEST_NAME ?= fedguest-sample
+APPDEP_TEST_NAME ?= applicationdeployment-sample
+VALIDATION_FIXTURES_DIR ?= test/validation/fixtures
 
 .PHONY: setup-test-e2e
 setup-test-e2e: ## Set up a Kind cluster for e2e tests if it does not exist
@@ -170,6 +174,46 @@ deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in
 .PHONY: undeploy
 undeploy: kustomize ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
 	"$(KUSTOMIZE)" build config/default | "$(KUBECTL)" delete --ignore-not-found=$(ignore-not-found) -f -
+
+.PHONY: validation-test
+validation-test: ## Apply invalid Federation/ApplicationDeployment samples one-by-one and delete each after test.
+	@$(KUBECTL) create namespace guest --dry-run=client -o yaml | $(KUBECTL) apply -f - >/dev/null
+	@for file in \
+		"$(VALIDATION_FIXTURES_DIR)/federation-sample-invalid-serviceendpoint.yaml" \
+		"$(VALIDATION_FIXTURES_DIR)/federation-sample-invalid-endpointtype.yaml" \
+		"$(VALIDATION_FIXTURES_DIR)/federation-sample-invalid-port.yaml" \
+		"$(VALIDATION_FIXTURES_DIR)/federation-sample-invalid-ipv4.yaml" \
+		"$(VALIDATION_FIXTURES_DIR)/federation-sample-invalid-ipv6.yaml"; do \
+		echo "==> Testing $$file"; \
+		$(KUBECTL) apply -f "$$file" >/dev/null; \
+		if $(KUBECTL) apply --server-side --subresource=status -f "$$file"; then \
+			echo "ERROR: $$file unexpectedly passed"; \
+			$(KUBECTL) delete -f "$$file" --ignore-not-found >/dev/null 2>&1; \
+			exit 1; \
+		else \
+			echo "OK: $$file rejected as expected"; \
+		fi; \
+		$(KUBECTL) delete -f "$$file" --ignore-not-found >/dev/null; \
+	done
+	@for file in \
+		"$(VALIDATION_FIXTURES_DIR)/applicationdeployment-sample-invalid-xvalidation.yaml" \
+		"$(VALIDATION_FIXTURES_DIR)/applicationdeployment-sample-invalid-ipv6.yaml" \
+		"$(VALIDATION_FIXTURES_DIR)/applicationdeployment-sample-invalid-interfaceid.yaml" \
+		"$(VALIDATION_FIXTURES_DIR)/applicationdeployment-sample-invalid-port.yaml"; do \
+		echo "==> Testing $$file"; \
+		$(KUBECTL) apply -f "$$file" >/dev/null; \
+		if $(KUBECTL) apply --server-side --subresource=status -f "$$file"; then \
+			echo "ERROR: $$file unexpectedly passed"; \
+			$(KUBECTL) delete -f "$$file" --ignore-not-found >/dev/null 2>&1; \
+			exit 1; \
+		else \
+			echo "OK: $$file rejected as expected"; \
+		fi; \
+		$(KUBECTL) delete -f "$$file" --ignore-not-found >/dev/null; \
+	done
+
+.PHONY: validation-test-cleanup
+validation-test-cleanup: validation-test uninstall ## Run validation-test then remove installed CRDs.
 
 ##@ Dependencies
 
