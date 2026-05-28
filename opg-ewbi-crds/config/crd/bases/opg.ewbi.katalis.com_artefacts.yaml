@@ -1,0 +1,508 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.1
+  name: artefacts.opg.ewbi.katalis.com
+spec:
+  group: opg.ewbi.katalis.com
+  names:
+    kind: Artefact
+    listKind: ArtefactList
+    plural: artefacts
+    shortNames:
+    - art
+    singular: artefact
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.federationContextId
+      name: federationContextId
+      type: string
+    - jsonPath: .spec.artefactId
+      name: artefactId
+      type: string
+    - jsonPath: .status.state
+      name: state
+      type: string
+    - jsonPath: .status.lastUpdated
+      name: lastUpdated
+      type: string
+    name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: Artefact is the Schema for the artefacts API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ArtefactSpec defines the desired state of Artefact
+            properties:
+              artefactBody:
+                properties:
+                  appProviderId:
+                    description: UserId of the app provider.  Identifier is relevant
+                      only in context of this federation.
+                    pattern: ^[A-Za-z][A-Za-z0-9_]{7,63}$
+                    type: string
+                  artefactDescription:
+                    description: Brief description of the artefact by the application
+                      provider
+                    maxLength: 256
+                    type: string
+                  artefactDescriptorType:
+                    description: Type of descriptor present in the artefact.  App
+                      provider can either define either a Helm chart or a Terraform
+                      script or container spec.
+                    enum:
+                    - HELM
+                    - TERRAFORM
+                    - ANSIBLE
+                    - SHELL
+                    - COMPONENTSPEC
+                    type: string
+                  artefactFileFormat:
+                    description: Artefacts like Helm charts or Terraform scripts may
+                      need compressed format.
+                    enum:
+                    - ZIP
+                    - TAR
+                    - TEXT
+                    - TARGZ
+                    type: string
+                  artefactFileName:
+                    description: Name of the file.
+                    maxLength: 32
+                    minLength: 8
+                    type: string
+                  artefactName:
+                    description: Name of the artefact.
+                    pattern: ^[A-Za-z][A-Za-z0-9_]{7,31}$
+                    type: string
+                  artefactRepoLocation:
+                    properties:
+                      password:
+                        description: Password to access the repository
+                        type: string
+                      repoURL:
+                        type: string
+                      token:
+                        description: Authorization token to access the repository
+                        type: string
+                      userName:
+                        description: Username to access the repository
+                        type: string
+                    type: object
+                  artefactVersionInfo:
+                    description: Artefact version information
+                    type: string
+                  artefactVirtType:
+                    enum:
+                    - VM_TYPE
+                    - CONTAINER_TYPE
+                    type: string
+                  componentSpec:
+                    description: Details about compute, networking and storage requirements
+                      for each component of the application. App provider should define
+                      all information needed to instantiate the component. If artefact
+                      is being defined at component level this section should have
+                      information just about the component. In case the artefact is
+                      being defined at application level the section should provide
+                      details about all the components.
+                    properties:
+                      commandLineParams:
+                        description: List of commands and arguments that shall be
+                          invoked when the component instance is created. This is
+                          valid only for container based deployment.
+                        properties:
+                          command:
+                            description: List of commands that application should
+                              invoke when an instance is created.
+                            items:
+                              type: string
+                            type: array
+                          commandArgs:
+                            description: List of arguments required by the command.
+                            items:
+                              type: string
+                            type: array
+                        required:
+                        - command
+                        type: object
+                      compEnvParams:
+                        items:
+                          description: Environment variables are key value pairs that
+                            should be injected when component in instantiated
+                          properties:
+                            envValueType:
+                              enum:
+                              - USER_DEFINED
+                              - PLATFORM_DEFINED_DYNAMIC_PORT
+                              - PLATFORM_DEFINED_DNS
+                              - PLATFORM_DEFINED_IP
+                              type: string
+                            envVarName:
+                              description: Name of environment variable
+                              pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,30}[A-Za-z0-9]$
+                              type: string
+                            envVarSrc:
+                              description: Full path of parameter from componentSpec
+                                that should be used to generate the environment value.
+                                Eg. networkResourceProfile. interfaceId.
+                              type: string
+                            envVarValue:
+                              description: Value to be assigned to environment variable
+                              pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,62}[A-Za-z0-9]$
+                              type: string
+                          required:
+                          - envValueType
+                          - envVarName
+                          type: object
+                        type: array
+                      componentName:
+                        description: Must be a valid RFC 1035 label name.  Component
+                          name must be unique with an application
+                        pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,62}[A-Za-z0-9]$
+                        type: string
+                      computeResourceProfile:
+                        properties:
+                          cpuArchType:
+                            description: CPU Instruction Set Architecture (ISA) E.g.,
+                              Intel, Arm etc.
+                            enum:
+                            - ISA_X86_64
+                            - ISA_ARM_64
+                            type: string
+                          cpuExclusivity:
+                            description: Support for exclusive CPUs
+                            type: boolean
+                          diskStorage:
+                            description: Amount of disk storage in Gbytes for a given
+                              ISA type
+                            format: int32
+                            type: integer
+                          fpga:
+                            description: Number of FPGAs available for a given ISA
+                              type
+                            type: integer
+                          gpu:
+                            items:
+                              properties:
+                                gpuMemory:
+                                  description: GPU memory in Mbytes
+                                  type: integer
+                                gpuModeName:
+                                  description: Model name corresponding to vendorType
+                                    may include info e.g. for NVIDIA, model name could
+                                    be "Tesla M60", "Tesla V100" etc.
+                                  type: string
+                                gpuVendorType:
+                                  description: GPU vendor name e.g. NVIDIA, AMD etc.
+                                  enum:
+                                  - GPU_PROVIDER_NVIDIA
+                                  - GPU_PROVIDER_AMD
+                                  example: Nvidia
+                                  type: string
+                                numGPU:
+                                  description: Number of GPUs
+                                  type: integer
+                              required:
+                              - gpuMemory
+                              - gpuModeName
+                              - gpuVendorType
+                              - numGPU
+                              type: object
+                            type: array
+                          hugepages:
+                            items:
+                              properties:
+                                number:
+                                  description: Total number of huge pages
+                                  type: integer
+                                pageSize:
+                                  description: Size of hugepage
+                                  enum:
+                                  - 2MB
+                                  - 4MB
+                                  - 1GB
+                                  type: string
+                              required:
+                              - number
+                              - pageSize
+                              type: object
+                            type: array
+                          memory:
+                            description: Amount of RAM in Mbytes
+                            format: int64
+                            type: integer
+                          numCPU:
+                            description: Number of vcpus in whole, decimal up to millivcpu,
+                              or millivcpu format.
+                            example:
+                              decimal:
+                                value: "0.500"
+                              millivcpu:
+                                value: 500m
+                              whole:
+                                value: "2"
+                            pattern: ^\d+((\.\d{1,3})|(m))?$
+                            type: string
+                          vpu:
+                            description: Number of Intel VPUs available for a given
+                              ISA type
+                            type: integer
+                        required:
+                        - cpuArchType
+                        - memory
+                        - numCPU
+                        type: object
+                      deploymentConfig:
+                        description: Configuration used when deploying a component.
+                          May override other ComponentSpec parameters related to deployment
+                          like restart policy, command line parameters, environment
+                          variables, etc.
+                        properties:
+                          configType:
+                            description: Config type.
+                            enum:
+                            - DOCKER_COMPOSE
+                            - KUBERNETES_MANIFEST
+                            - CLOUD_INIT
+                            - HELM_VALUES
+                            type: string
+                          contents:
+                            description: Contents of the configuration.
+                            type: string
+                        required:
+                        - configType
+                        - contents
+                        type: object
+                      exposedInterfaces:
+                        description: Each application component exposes some ports
+                          either for external users or for inter component communication.
+                          Application provider is required to specify which ports
+                          are to be exposed and the type of traffic that will flow
+                          through these ports.
+                        items:
+                          properties:
+                            InterfaceName:
+                              description: Interface Name. Required only if application
+                                has to be attached to a network other than default.
+                              pattern: ^[a-z][a-z0-9]{3}$
+                              type: string
+                            commPort:
+                              description: Port number exposed by the component. OP
+                                may generate a dynamic port towards the UCs corresponding
+                                to this internal port and forward the client traffic
+                                from dynamic port to container Port.
+                              format: int32
+                              maximum: 65535
+                              minimum: 1
+                              type: integer
+                            commProtocol:
+                              description: Defines the IP transport communication
+                                protocol i.e., TCP, UDP or HTTP
+                              enum:
+                              - TCP
+                              - UDP
+                              - HTTP_HTTPS
+                              type: string
+                            interfaceId:
+                              description: Each Port and corresponding traffic protocol
+                                exposed by the component is identified by a name.
+                                Application client on user device requires this to
+                                uniquely identify the interface.
+                              pattern: ^[A-Za-z0-9][A-Za-z0-9_]{6,30}[A-Za-z0-9]$
+                              type: string
+                            network:
+                              description: Name of the network.  In case the application
+                                has to be associated with more than 1 network then
+                                app provider must define the name of the network on
+                                which this interface has to be exposed.  This parameter
+                                is required only if the port has to be exposed on
+                                a specific network other than default.
+                              pattern: ^[A-Za-z][A-Za-z0-9_]{6,30}[A-Za-z0-9]$
+                              type: string
+                            visibilityType:
+                              description: Defines whether the interface is exposed
+                                to outer world or not i.e., external, or internal.
+                                If this is set to "external", then it is exposed to
+                                external applications otherwise it is exposed internally
+                                to edge application components within edge cloud.
+                                When exposed to external world, an external dynamic
+                                port is assigned for UC traffic and mapped to the
+                                internal container Port
+                              enum:
+                              - VISIBILITY_EXTERNAL
+                              - VISIBILITY_INTERNAL
+                              type: string
+                          required:
+                          - commPort
+                          - commProtocol
+                          - interfaceId
+                          - visibilityType
+                          type: object
+                        minItems: 1
+                        type: array
+                      images:
+                        description: List of all images associated with the component.
+                          Images are specified using the file identifiers. Partner
+                          OP provides these images using file upload api.
+                        items:
+                          description: A globally unique identifier associated with
+                            the image file. Originating OP generates this identifier
+                            when file is uploaded over NBI.
+                          format: uuid
+                          type: string
+                        minItems: 1
+                        type: array
+                      numOfInstances:
+                        description: Number of component instances to be launched.
+                        format: int32
+                        type: integer
+                      persistentVolumes:
+                        description: The ephemeral volume a container process may
+                          need to temporary store internal data
+                        items:
+                          properties:
+                            accessMode:
+                              default: RW
+                              description: Values are RW (read/write) and RO (read-only)
+                              enum:
+                              - RW
+                              - RO
+                              type: string
+                            ephemeralType:
+                              default: false
+                              description: It indicates the ephemeral storage on the
+                                node and contents are not preserved if containers
+                                restarts
+                              type: boolean
+                            sharingPolicy:
+                              default: EXCLUSIVE
+                              description: Exclusive or Shared. If shared, then in
+                                case of multiple containers same volume will be shared
+                                across the containers.
+                              enum:
+                              - EXCLUSIVE
+                              - SHARED
+                              type: string
+                            volumeMountPath:
+                              description: Defines the mount path of the volume
+                              type: string
+                            volumeName:
+                              description: Human readable name for the volume
+                              type: string
+                            volumeSize:
+                              description: Size of the volume given by user (10GB,
+                                20GB, 50 GB or 100GB)
+                              enum:
+                              - 10Gi
+                              - 20Gi
+                              - 50Gi
+                              - 100Gi
+                              type: string
+                          required:
+                          - volumeMountPath
+                          - volumeName
+                          - volumeSize
+                          type: object
+                        minItems: 1
+                        type: array
+                      restartPolicy:
+                        description: How the platform shall handle component failure
+                        enum:
+                        - RESTART_POLICY_ALWAYS
+                        - RESTART_POLICY_NEVER
+                        type: string
+                    required:
+                    - componentName
+                    - computeResourceProfile
+                    - images
+                    - numOfInstances
+                    - restartPolicy
+                    type: object
+                  repoType:
+                    description: Artefact or file repository location. PUBLICREPO
+                      is used of public URLs like GitHub, Helm repo, docker registry
+                      etc., PRIVATEREPO is used for private repo managed by the application
+                      developer, UPLOAD is for the case when artefact/file is uploaded
+                      from MEC web portal.  OP should pull the image from ‘repoUrl'
+                      immediately after receiving the request and then send back the
+                      response. In case the repoURL corresponds to a docker registry,
+                      use docker v2 http api to do the pull.
+                    enum:
+                    - PRIVATEREPO
+                    - PUBLICREPO
+                    - UPLOAD
+                    type: string
+                required:
+                - appProviderId
+                - artefactDescriptorType
+                - artefactName
+                - artefactVersionInfo
+                - artefactVirtType
+                - componentSpec
+                type: object
+              artefactId:
+                description: A globally unique identifier associated with the artefact.
+                  Originating OP generates this identifier when artefact is submitted
+                  over NBI.
+                format: uuid
+                type: string
+              federationContextId:
+                description: This identifier shall be provided by the partner OP on
+                  successful verification and validation of the federation create
+                  request and is used by partner op to identify this newly created
+                  federation context. Originating OP shall provide this identifier
+                  in any subsequent request towards the partner op.
+                pattern: ^[A-Za-z0-9][A-Za-z0-9-]*$
+                type: string
+            required:
+            - artefactId
+            - federationContextId
+            type: object
+          status:
+            description: ArtefactStatus defines the observed state of Artefact.
+            properties:
+              lastUpdated:
+                description: Timestamp of the last status update
+                format: date-time
+                type: string
+              message:
+                description: Message indicating details about the current state
+                type: string
+              state:
+                description: Current state of the artefact upload
+                enum:
+                - Pending
+                - Uploading
+                - Uploaded
+                - Failed
+                type: string
+            required:
+            - state
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

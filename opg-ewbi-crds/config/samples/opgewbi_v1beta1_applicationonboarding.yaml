@@ -1,0 +1,48 @@
+apiVersion: opg.ewbi.katalis.com/v1beta1
+kind: ApplicationOnboarding
+metadata:
+  labels:
+    app.kubernetes.io/name: opg-ewbi-crds
+    app.kubernetes.io/managed-by: kustomize
+  name: applicationonboarding-sample
+  namespace: guest
+spec:
+  federationContextId: f27e71c7-e701-27f2-59b6-bf2de514ce02
+  zoneSettings:
+    - { zoneId: [ b0b071c7-e701-27f2-59b6-bf2de514ce06 ],
+      forbid: false }
+    - { zoneId: [ b0ba71c7-e701-27f2-59b6-bf2de514ce07 ],
+      forbid: false }
+  appInfo:
+    appId: "EdgeAppTester01"
+    appProviderId: "TheAmazingTestingCompany"
+    appDeploymentZones:
+    - zoneId: b0b071c7-e701-27f2-59b6-bf2de514ce06
+      countryCode: IT
+    - zoneId: b0ba71c7-e701-27f2-59b6-bf2de514ce07
+      countryCode: IT
+    appMetaData:
+      appName: "App_Amazing_Test"
+      version: "1.0.0"
+      appDescription: "This is the amazing test application provided by TheAmazingTestingCompany"
+      mobilitySupport: true
+      accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+      category: "GAMING"
+    appQoSProfile:
+      latencyConstraints: NONE
+      bandwidthRequired: 1
+      multiUserClients: APP_TYPE_SINGLE_USER
+      noOfUsersPerAppInst: 10
+      appProvisioning: true
+    appComponentSpecs:
+      - serviceNameNB: amazingtest.theamazingtestingcompany.com
+        serviceNameEW: amazingtest.theamazingtestingcompany.com
+        componentName: HelmChart
+        artefactId: c0c071c7-e701-27f2-59b6-bf2de514ce06
+    appStatusCallbackLink: 192.168.42.12:6443
+    edgeAppFQDN: dns.theamazingtestingcompany.com
+    onboardStatusInfo: PENDING
+status:
+  state: "Uploaded"
+  message: "upload completed with bandwidth x"
+  lastUpdated: "2025-07-29T14:29:54.58072+02:00"
