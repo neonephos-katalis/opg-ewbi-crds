@@ -414,6 +414,8 @@ spec:
                     type: array
                   ipv6Addresses:
                     items:
+                      format: ipv6
+                      pattern: ^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))$
                       type: string
                     minItems: 1
                     type: array
@@ -424,6 +426,10 @@ spec:
                 - endpointType
                 - port
                 type: object
+                x-kubernetes-validations:
+                - message: at least one among fqdn, ipv4Addresses, ipv6Addresses must
+                    be set
+                  rule: has(self.fqdn) || has(self.ipv4Addresses) || has(self.ipv6Addresses)
               zoneDetails:
                 items:
                   properties:

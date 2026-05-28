@@ -51,6 +51,7 @@ type AppDetails struct {
 	AppInstCallbackLink string `json:"appInstCallbackLink,omitempty"`
 }
 
+// +kubebuilder:validation:XValidation:rule="has(self.fqdn) || has(self.ipv4Addresses) || has(self.ipv6Addresses)",message="at least one among fqdn, ipv4Addresses, ipv6Addresses must be set"
 type AccessPoints struct {
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Minimum=0
@@ -66,7 +67,8 @@ type AccessPoints struct {
 
 	// +kubebuilder:validation:Optional
 	// +kubebuilder:validation:MinItems=1
-	// Nota: Le regole pattern 'allOf' originali andranno verificate tramite Webhook.
+	// +kubebuilder:validation:items:Format=ipv6
+	// +kubebuilder:validation:items:Pattern=`^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))$`
 	Ipv6Addresses []IPv6String `json:"ipv6Addresses,omitempty"`
 }
 
