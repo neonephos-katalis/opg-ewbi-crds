@@ -1,0 +1,15 @@
+apiVersion: opg.ewbi.katalis.com/v1beta1
+kind: Artefact
+metadata:
+  labels:
+    app.kubernetes.io/name: opg-ewbi-crds
+    app.kubernetes.io/managed-by: kustomize
+  name: artefact-sample
+  namespace: guest
+spec:
+  federationContextId: f27e71c7-e701-27f2-59b6-bf2de514ce02
+  artefactId: "1358b447-5685-4c13-a0e2-c4f46c271865"
+status:
+  state: "Uploaded"
+  message: "upload completed with bandwidth x"
+  lastUpdated: "2025-07-21T13:29:54.58072+02:00"

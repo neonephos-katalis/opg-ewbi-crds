@@ -1,0 +1,103 @@
+apiVersion: opg.ewbi.katalis.com/v1beta1
+kind: AvailabilityZone
+metadata:
+  labels:
+    app.kubernetes.io/name: opg-ewbi-crds
+    app.kubernetes.io/managed-by: kustomize
+  name: availabilityzone-sample
+  namespace: guest
+spec:
+  federationContextId: f27e71c7-e701-27f2-59b6-bf2de514ce02
+  zoneId: b0b071c7-e701-27f2-59b6-bf2de514ce06
+  link: 192.168.42.12:6443
+status: {
+  reservedComputeResources:
+    [
+      {
+        cpuArchType: ISA_X86_64,
+        numCPU: 500m,
+        memory: 0,
+        diskStorage: 0,
+        gpu:
+          [
+            {
+              gpuVendorType: Nvidia,
+              gpuModeName: string,
+              gpuMemory: 0,
+              numGPU: 0,
+            },
+          ],
+        vpu: 0,
+        fpga: 0,
+        hugepages: [{ pageSize: 2MB, number: 0 }],
+        cpuExclusivity: True,
+      },
+    ],
+    computeResourceQuotaLimits:
+      [
+        {
+          cpuArchType: ISA_X86_64,
+          numCPU: 500m,
+          memory: 0,
+          diskStorage: 0,
+          gpu:
+            [
+              {
+                gpuVendorType: Nvidia,
+                gpuModeName: string,
+                gpuMemory: 0,
+                numGPU: 0,
+              },
+            ],
+          vpu: 0,
+          fpga: 0,
+          hugepages: [{ pageSize: 2MB, number: 0 }],
+          cpuExclusivity: true,
+        },
+      ],
+    flavoursSupported:
+      [
+        {
+          flavourId: m1.tiny,
+          cpuArchType: ISA_X86,
+          supportedOSTypes:
+            [
+              {
+                architecture: x86_64,
+                distribution: RHEL,
+                version: OS_VERSION_UBUNTU_2204_LTS,
+                license: OS_LICENSE_TYPE_FREE,
+              },
+            ],
+          numCPU: 1,
+          memorySize: 25,
+          storageSize: 25,
+          gpu:
+            [
+              {
+                gpuVendorType: Nvidia,
+                gpuModeName: string,
+                gpuMemory: 0,
+                numGPU: 0,
+              },
+            ],
+          fpga: 0,
+          vpu: 0,
+          hugepages: [{ pageSize: 2MB, number: 0 }],
+          cpuExclusivity: true,
+        },
+      ],
+    networkResources:
+      {
+        egressBandWidth: 0,
+        dedicatedNIC: 0,
+        supportSriov: true,
+        supportDPDK: true,
+      },
+    zoneServiceLevelObjsInfo:
+      {
+        latencyRanges: { minLatency: 1, maxLatency: 0 },
+        jitterRanges: { minJitter: 1, maxJitter: 0 },
+        throughputRanges: { minThroughput: 1, maxThroughput: 0 },
+      }
+}

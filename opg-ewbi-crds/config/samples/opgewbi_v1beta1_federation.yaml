@@ -1,0 +1,37 @@
+apiVersion: opg.ewbi.katalis.com/v1beta1
+kind: Federation
+metadata:
+  labels:
+    app.kubernetes.io/name: opg-ewbi-crds
+    app.kubernetes.io/managed-by: kustomize
+  name: fedguest-sample
+  namespace: guest
+spec:
+  federationData: 
+    origOPFederationId: "guest-federation-id"
+    origOPCountryCode: "IT"
+    initialDate: "2026-03-18T10:00:00Z"
+    partnerStatusLink: "https://example.guest.com/federation/v1/status"
+    partnerCallbackCredentials:
+      clientId: "client-id-host"
+      clientSecret: "client-secret-host"
+      tokenUrl: "https://example.guest.com"
+    fixedNetworkIds:
+      - "network-id-1"
+      - "network-id-2"
+    mobileNetworkIds:
+      mcc: "123"
+      mncs:
+        - "456"
+        - "789"
+status:
+  federationContextId: f27e71c7-e701-27f2-596-bf2de514ce02
+  federationExpiryDate: "2026-04-18T10:00:00Z"
+  federationRenwalDate: "2026-03-28T10:00:00Z"
+  zoneDetails:
+    - zoneId: b0b071c7-e701-27f2-59b6-bf2de514ce06
+      geolocation: "45.4642,9.1900"
+      geographyDetails: "Milan, Italy"
+    - zoneId: b0b071c7-e701-27f2-59b6-bf2de514ce07
+      geolocation: "41.9028,12.4964"
+      geographyDetails: "Rome, Italy"

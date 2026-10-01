@@ -1,0 +1,35 @@
+apiVersion: opg.ewbi.katalis.com/v1beta1
+kind: Image
+metadata:
+  labels:
+    app.kubernetes.io/name: opg-ewbi-crds
+    app.kubernetes.io/managed-by: kustomize
+  name: image-sample
+  namespace: guest
+spec:
+  federationContextId: f27e71c7-e701-27f2-59b6-bf2de514ce02
+  imageId: f17e71c7-e701-27f2-59b6-bf2de514ce06
+  imageBody:
+    appProviderId: Kustellaris
+    imageName: debian10
+    imageDescription: This is a simple file test.
+    imageVersionInfo: 0.28.0
+    imageType: DOCKER
+    checksum: 3de8f8b0dc94b8c2230fab9ec0ba0506
+    imgOSType:
+      architecture: x86_64
+      distribution: OTHER
+      version: OTHER
+      license: NOT_SPECIFIED
+    imgInsSetArch: ISA_X86_64
+    repoType: UPLOAD
+    imageRepoLocation:
+      - repoURL: https://cloud.debian.org/cdimage/cloud/OpenStack/current-10/debian-10-openstack-amd64.qcow2
+        userName: github-user
+        password: 616665726e616e64657a74656c65666f6e696361
+        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+    image: VGhpcyBpcyBhIHRlc3QgZmlsZS4=
+status:
+  state: Pending
+  message: Partner will update this field
+  lastUpdated: "2025-07-21T13:29:54.58072+02:00"

@@ -1,0 +1,6 @@
+# This is the CODEOWNERS file.
+# It defines who is responsible for specific parts of the repository.
+
+# Use '*' to define default owners for all files.
+# These users will be automatically requested for review on every PR.
+* @francescofiorentinoTIM
