@@ -244,7 +244,7 @@ This repository includes a GitHub Actions workflow (`.github/workflows/sync-upst
   - Checks out `https://github.com/neonephos-katalis/opg-ewbi-operator` (branch `main`).
   - Synchronizes Go types into `apis/operator/v1beta1/` and YAML manifests into `crds/operator/bases/`.
   - Regenerates `crds/operator/install.yaml` and the root `install.yaml`.
-  - If changes are detected, it creates a branch (`automation/sync-operator-crds`) and opens an automated Pull Request against `main`.
+  - If changes are detected, it updates the dedicated branch (`automation/sync-operator-crds`), attempts PR creation, and posts a GitHub Actions summary containing a 1-click comparison link to open the Pull Request.
 
 ---
 
