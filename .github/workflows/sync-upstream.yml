@@ -85,9 +85,20 @@ jobs:
           cd opg-ewbi-crds
           go mod tidy
 
+      - name: Generate GitHub App Token
+        id: app-token
+        if: ${{ env.SYNC_APP_ID != '' && env.SYNC_APP_PRIVATE_KEY != '' }}
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
+        env:
+          SYNC_APP_ID: ${{ secrets.SYNC_APP_ID }}
+          SYNC_APP_PRIVATE_KEY: ${{ secrets.SYNC_APP_PRIVATE_KEY }}
+        with:
+          app-id: ${{ secrets.SYNC_APP_ID }}
+          private-key: ${{ secrets.SYNC_APP_PRIVATE_KEY }}
+
       - name: Create Pull Request if changes detected
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           COMMIT_SHA: ${{ steps.upstream_info.outputs.sha }}
           COMMIT_MSG: ${{ steps.upstream_info.outputs.msg }}
