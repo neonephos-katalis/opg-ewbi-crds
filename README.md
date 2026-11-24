@@ -220,17 +220,18 @@ When Go types in `api/operator/v1beta1/*_types.go` are modified:
 
 ## Automated Upstream Synchronization
 
-This repository includes a GitHub Actions workflow (`.github/workflows/sync-upstream.yml`) configured to synchronize CRD definitions from the `main` branch of `opg-ewbi-operator`.
+This repository includes a GitHub Actions workflow (`.github/workflows/sync-upstream.yml`) configured to synchronize CRD definitions from the `main` branch of the upstream repository [neonephos-katalis/opg-ewbi-operator](https://github.com/neonephos-katalis/opg-ewbi-operator).
 
+- Upstream Source: https://github.com/neonephos-katalis/opg-ewbi-operator
 - Triggers:
   - Scheduled run every 6 hours.
   - Manual trigger via `workflow_dispatch`.
-  - Repository webhook dispatch via `repository_dispatch`.
+  - Repository webhook dispatch via `repository_dispatch` (event types: `opg-operator-updated`, `upstream-sync`).
 - Behavior:
-  - Clones the latest `main` branch of `opg-ewbi-operator`.
-  - Copies Go type definitions and generated YAML manifests.
+  - Clones the latest `main` branch of `https://github.com/neonephos-katalis/opg-ewbi-operator`.
+  - Copies Go type definitions (`api/operator/v1beta1/*.go`) and generated YAML manifests (`config/crd/bases/*.yaml`).
   - Regenerates `install.yaml` and executes `go mod tidy`.
-  - If any differences are detected, it automatically creates a new branch and submits a Pull Request against `main`.
+  - If any differences are detected, it automatically creates a new branch (`automation/sync-crd-upstream`) and submits a Pull Request against `main`.
 
 ---
 
