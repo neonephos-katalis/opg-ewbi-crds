@@ -55,6 +55,10 @@ jobs:
 
       - name: Synchronize Operator CRD files
         run: |
+          # Clean existing Go types and YAML manifests to eliminate orphan files
+          rm -f opg-ewbi-crds/apis/operator/v1beta1/*.go
+          rm -f opg-ewbi-crds/crds/operator/bases/*.yaml
+
           # Copy Go types to component folder
           mkdir -p opg-ewbi-crds/apis/operator/v1beta1
           cp upstream-operator/api/operator/v1beta1/*.go opg-ewbi-crds/apis/operator/v1beta1/
