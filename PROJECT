@@ -1,8 +1,8 @@
 domain: katalis.com
 layout:
 - go.kubebuilder.io/v4
-projectName: opg-ewbi-crd
-repo: github.com/neonephos-katalis/opg-ewbi-crd
+projectName: opg-ewbi-crds
+repo: github.com/neonephos-katalis/opg-ewbi-crds
 resources:
 - api:
     crdVersion: v1
@@ -10,7 +10,7 @@ resources:
   domain: katalis.com
   group: opg.ewbi
   kind: ApplicationDeployment
-  path: github.com/neonephos-katalis/opg-ewbi-crd/api/operator/v1beta1
+  path: github.com/neonephos-katalis/opg-ewbi-crds/apis/operator/v1beta1
   version: v1beta1
 - api:
     crdVersion: v1
@@ -18,7 +18,7 @@ resources:
   domain: katalis.com
   group: opg.ewbi
   kind: ApplicationOnboarding
-  path: github.com/neonephos-katalis/opg-ewbi-crd/api/operator/v1beta1
+  path: github.com/neonephos-katalis/opg-ewbi-crds/apis/operator/v1beta1
   version: v1beta1
 - api:
     crdVersion: v1
@@ -26,7 +26,7 @@ resources:
   domain: katalis.com
   group: opg.ewbi
   kind: Artefact
-  path: github.com/neonephos-katalis/opg-ewbi-crd/api/operator/v1beta1
+  path: github.com/neonephos-katalis/opg-ewbi-crds/apis/operator/v1beta1
   version: v1beta1
 - api:
     crdVersion: v1
@@ -34,7 +34,7 @@ resources:
   domain: katalis.com
   group: opg.ewbi
   kind: AvailabilityZone
-  path: github.com/neonephos-katalis/opg-ewbi-crd/api/operator/v1beta1
+  path: github.com/neonephos-katalis/opg-ewbi-crds/apis/operator/v1beta1
   version: v1beta1
 - api:
     crdVersion: v1
@@ -42,7 +42,7 @@ resources:
   domain: katalis.com
   group: opg.ewbi
   kind: ConsumptionMonitoring
-  path: github.com/neonephos-katalis/opg-ewbi-crd/api/operator/v1beta1
+  path: github.com/neonephos-katalis/opg-ewbi-crds/apis/operator/v1beta1
   version: v1beta1
 - api:
     crdVersion: v1
@@ -50,7 +50,7 @@ resources:
   domain: katalis.com
   group: opg.ewbi
   kind: Federation
-  path: github.com/neonephos-katalis/opg-ewbi-crd/api/operator/v1beta1
+  path: github.com/neonephos-katalis/opg-ewbi-crds/apis/operator/v1beta1
   version: v1beta1
 - api:
     crdVersion: v1
@@ -58,6 +58,6 @@ resources:
   domain: katalis.com
   group: opg.ewbi
   kind: Image
-  path: github.com/neonephos-katalis/opg-ewbi-crd/api/operator/v1beta1
+  path: github.com/neonephos-katalis/opg-ewbi-crds/apis/operator/v1beta1
   version: v1beta1
 version: "3"

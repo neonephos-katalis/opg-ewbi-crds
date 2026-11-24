@@ -1,4 +1,4 @@
-module github.com/neonephos-katalis/opg-ewbi-crd
+module github.com/neonephos-katalis/opg-ewbi-crds
 
 go 1.23.0
 

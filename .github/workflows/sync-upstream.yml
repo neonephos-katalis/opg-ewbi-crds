@@ -1,4 +1,4 @@
-name: Sync CRD from opg-ewbi-operator
+name: Sync Operator CRDs from opg-ewbi-operator
 
 on:
   schedule:
@@ -22,14 +22,14 @@ permissions:
 
 jobs:
   sync-crd:
-    name: Synchronize CRD Definitions
+    name: Synchronize Operator CRD Definitions
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout opg-ewbi-crd
+      - name: Checkout opg-ewbi-crds
         uses: actions/checkout@v4
         with:
-          path: opg-ewbi-crd
+          path: opg-ewbi-crds
 
       - name: Checkout opg-ewbi-operator
         uses: actions/checkout@v4
@@ -53,43 +53,41 @@ jobs:
           echo "sha=${COMMIT_SHA}" >> "$GITHUB_OUTPUT"
           echo "msg=${COMMIT_MSG}" >> "$GITHUB_OUTPUT"
 
-      - name: Synchronize CRD files
+      - name: Synchronize Operator CRD files
         run: |
-          # Copy Go types
-          mkdir -p opg-ewbi-crd/api/operator/v1beta1
-          cp upstream-operator/api/operator/v1beta1/*.go opg-ewbi-crd/api/operator/v1beta1/
+          # Copy Go types to component folder
+          mkdir -p opg-ewbi-crds/apis/operator/v1beta1
+          cp upstream-operator/api/operator/v1beta1/*.go opg-ewbi-crds/apis/operator/v1beta1/
 
-          # Copy YAML manifests
-          mkdir -p opg-ewbi-crd/config/crd/bases opg-ewbi-crd/crds
-          cp upstream-operator/config/crd/bases/*.yaml opg-ewbi-crd/config/crd/bases/
-          cp upstream-operator/config/crd/bases/*.yaml opg-ewbi-crd/crds/
+          # Copy YAML manifests to component folder
+          mkdir -p opg-ewbi-crds/crds/operator/bases
+          cp upstream-operator/config/crd/bases/*.yaml opg-ewbi-crds/crds/operator/bases/
 
-          # Copy Kustomize configurations if present
           if [ -f upstream-operator/config/crd/kustomization.yaml ]; then
-            cp upstream-operator/config/crd/kustomization.yaml opg-ewbi-crd/config/crd/
-          fi
-          if [ -f upstream-operator/config/crd/kustomizeconfig.yaml ]; then
-            cp upstream-operator/config/crd/kustomizeconfig.yaml opg-ewbi-crd/config/crd/
+            cp upstream-operator/config/crd/kustomization.yaml opg-ewbi-crds/crds/operator/
           fi
 
-          # Regenerate single aggregated manifest
-          cat opg-ewbi-crd/config/crd/bases/*.yaml > opg-ewbi-crd/install.yaml
+          # Regenerate component install manifest
+          cat opg-ewbi-crds/crds/operator/bases/*.yaml > opg-ewbi-crds/crds/operator/install.yaml
+
+          # Regenerate top-level aggregated manifest
+          cat opg-ewbi-crds/crds/*/bases/*.yaml > opg-ewbi-crds/install.yaml
 
           # Tidy go dependencies
-          cd opg-ewbi-crd
+          cd opg-ewbi-crds
           go mod tidy
 
       - name: Create Pull Request if changes detected
         uses: peter-evans/create-pull-request@v6
         with:
-          path: opg-ewbi-crd
+          path: opg-ewbi-crds
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore(sync): update CRDs from opg-ewbi-operator (${{ steps.upstream_info.outputs.sha }})"
-          branch: automation/sync-crd-upstream
+          commit-message: "chore(sync): update operator CRDs from opg-ewbi-operator (${{ steps.upstream_info.outputs.sha }})"
+          branch: automation/sync-operator-crds
           delete-branch: true
-          title: "chore(sync): update CRDs from opg-ewbi-operator main (${{ steps.upstream_info.outputs.sha }})"
+          title: "chore(sync): update operator CRDs from main (${{ steps.upstream_info.outputs.sha }})"
           body: |
-            Automated synchronization of CRD Go types and YAML manifests from `opg-ewbi-operator` branch `main`.
+            Automated synchronization of operator CRD Go types and YAML manifests from `neonephos-katalis/opg-ewbi-operator` branch `main`.
 
             Source commit: ${{ steps.upstream_info.outputs.sha }}
             Commit message: ${{ steps.upstream_info.outputs.msg }}
