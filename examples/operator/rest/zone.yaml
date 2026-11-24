@@ -7,4 +7,4 @@ spec:
   relationType: GUEST
   federationContextId: c02456b8f-f53e-5894-921e-03c7db7e0ec6
   zoneId: 123e4567-e89b-12d3-a456-426614174000
-  zoneNotifLink: "http://katalis-fm-api.host.svc.cluster.local:8080"
+  availZoneNotifLink: "http://katalis-fm-api.host.svc.cluster.local:8080"
