@@ -1,0 +1,18 @@
+# Binaries for programs and plugins
+bin/
+dist/
+
+# Test artifacts
+cover.out
+coverage.html
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Go env
+vendor/
