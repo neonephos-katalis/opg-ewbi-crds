@@ -1,0 +1,88 @@
+name: Test CRDs and Validate Samples
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test-crds:
+    name: Validate CRDs and Custom Resource Samples
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Verify Go Code Formatting and Vetting
+        run: |
+          go fmt ./...
+          go vet ./...
+
+      - name: Verify Generated Manifests are Up to Date
+        run: |
+          make generate
+          make manifests
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Error: Uncommitted changes detected after running make generate and make manifests."
+            echo "Please run 'make generate && make manifests' locally and commit the result."
+            git diff
+            exit 1
+          fi
+
+      - name: Create Kind Cluster
+        uses: helm/kind-action@v1.10.0
+        with:
+          cluster_name: kind-crds-test
+
+      - name: Install All CRDs
+        run: |
+          kubectl apply -f install.yaml
+
+      - name: Wait for CRDs to be Established
+        run: |
+          crds=(
+            applicationdeployments.opg.ewbi.katalis.com
+            applicationonboardings.opg.ewbi.katalis.com
+            artefacts.opg.ewbi.katalis.com
+            availabilityzones.opg.ewbi.katalis.com
+            consumptionmonitorings.opg.ewbi.katalis.com
+            federations.opg.ewbi.katalis.com
+            images.opg.ewbi.katalis.com
+          )
+          for crd in "${crds[@]}"; do
+            echo "Waiting for CRD: $crd"
+            kubectl wait --for condition=established --timeout=60s "crd/$crd"
+          done
+
+      - name: Create Test Namespace
+        run: |
+          kubectl create namespace guest
+
+      - name: Test Apply Operator REST Samples
+        run: |
+          echo "Applying REST Custom Resources..."
+          kubectl apply -f examples/operator/rest/
+          kubectl -n guest get federations,availabilityzones,images,artefacts,applicationonboardings,applicationdeployments
+
+      - name: Clean Up REST Samples
+        run: |
+          kubectl delete -f examples/operator/rest/ --ignore-not-found
+
+      - name: Test Apply Operator K8S Samples
+        run: |
+          echo "Applying K8S Custom Resources..."
+          kubectl apply -f examples/operator/k8s/
+          kubectl -n guest get federations,availabilityzones,images,artefacts,applicationonboardings,applicationdeployments,consumptionmonitorings
+
+      - name: Clean Up Test Resources
+        run: |
+          kubectl delete -f examples/operator/k8s/ --ignore-not-found
+          kubectl delete namespace guest

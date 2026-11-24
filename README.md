@@ -36,6 +36,10 @@ opg-ewbi-crds/
 │       │   └── opg.ewbi.katalis.com_images.yaml
 │       ├── kustomization.yaml             # Component-level Kustomize file
 │       └── install.yaml                   # Aggregated manifest for operator CRDs only
+├── examples/                              # Valid Custom Resource examples for testing
+│   └── operator/
+│       ├── rest/                          # Sample CRs using REST technology
+│       └── k8s/                           # Sample CRs using direct Kubernetes technology
 ├── install.yaml                           # Global manifest containing all CRDs across all components
 ├── Makefile                               # Multi-component build and generation automation
 ├── PROJECT                                # Kubebuilder project metadata
@@ -213,6 +217,17 @@ func main() {
     utilruntime.Must(operatorv1beta1.AddToScheme(scheme))
 }
 ```
+
+---
+
+## Continuous Integration and Automated Testing
+
+This repository includes a GitHub Actions test workflow (`.github/workflows/test-crds.yml`) triggered on every push and pull request against `main`:
+
+1. Code Quality: Runs `go fmt` and `go vet`.
+2. Generator Consistency: Executes `make generate && make manifests` and checks for uncommitted changes to ensure manifests stay in sync with Go structs.
+3. Kind Cluster Validation: Creates an ephemeral Kind cluster, applies `install.yaml`, and verifies that all CRDs reach the `Established` state.
+4. Custom Resource Schema Testing: Creates the `guest` namespace, applies all sample CRs from `examples/operator/rest/` and `examples/operator/k8s/`, and verifies that the Kubernetes API server validates and accepts every resource without schema errors.
 
 ---
 
