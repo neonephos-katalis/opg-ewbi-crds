@@ -33,6 +33,7 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           path: opg-ewbi-crds
+          persist-credentials: true
 
       - name: Checkout opg-ewbi-operator
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -85,21 +86,32 @@ jobs:
           go mod tidy
 
       - name: Create Pull Request if changes detected
-        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6
-        with:
-          path: opg-ewbi-crds
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore(sync): update operator CRDs from opg-ewbi-operator (${{ steps.upstream_info.outputs.sha }})"
-          branch: automation/sync-operator-crds
-          delete-branch: true
-          title: "chore(sync): update operator CRDs from main (${{ steps.upstream_info.outputs.sha }})"
-          body: |
-            Automated synchronization of operator CRD Go types and YAML manifests from `neonephos-katalis/opg-ewbi-operator` branch `main`.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_SHA: ${{ steps.upstream_info.outputs.sha }}
+          COMMIT_MSG: ${{ steps.upstream_info.outputs.msg }}
+        run: |
+          cd opg-ewbi-crds
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No changes detected. Repository is already up to date."
+            exit 0
+          fi
 
-            Source commit: ${{ steps.upstream_info.outputs.sha }}
-            Commit message: ${{ steps.upstream_info.outputs.msg }}
+          BRANCH_NAME="automation/sync-operator-crds"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH_NAME"
+          git add .
+          git commit -m "chore(sync): update operator CRDs from opg-ewbi-operator ($COMMIT_SHA)"
+          git push origin "$BRANCH_NAME" --force
 
-            Please review the generated changes and verify downstream compatibility.
-          labels: |
-            sync
-            automated-pr
+          PR_EXISTS=$(gh pr list --head "$BRANCH_NAME" --state open --json number --jq '.[0].number')
+          if [ -n "$PR_EXISTS" ]; then
+            echo "Pull Request #$PR_EXISTS already exists and was updated."
+          else
+            gh pr create \
+              --title "chore(sync): update operator CRDs from main ($COMMIT_SHA)" \
+              --body "Automated synchronization of operator CRD definitions from neonephos-katalis/opg-ewbi-operator main ($COMMIT_SHA): $COMMIT_MSG" \
+              --base main \
+              --head "$BRANCH_NAME"
+          fi

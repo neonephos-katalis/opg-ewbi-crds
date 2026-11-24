@@ -44,10 +44,12 @@ jobs:
             exit 1
           fi
 
-      - name: Create Kind Cluster
-        uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde # v1.10.0
-        with:
-          cluster_name: kind-crds-test
+      - name: Install and Start Kind Cluster
+        run: |
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.24.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+          kind create cluster --name kind-crds-test
 
       - name: Install All CRDs
         run: |
