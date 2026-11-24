@@ -85,20 +85,9 @@ jobs:
           cd opg-ewbi-crds
           go mod tidy
 
-      - name: Generate GitHub App Token
-        id: app-token
-        if: ${{ env.SYNC_APP_ID != '' && env.SYNC_APP_PRIVATE_KEY != '' }}
-        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
+      - name: Push branch and create Pull Request if changes detected
         env:
-          SYNC_APP_ID: ${{ secrets.SYNC_APP_ID }}
-          SYNC_APP_PRIVATE_KEY: ${{ secrets.SYNC_APP_PRIVATE_KEY }}
-        with:
-          app-id: ${{ secrets.SYNC_APP_ID }}
-          private-key: ${{ secrets.SYNC_APP_PRIVATE_KEY }}
-
-      - name: Create Pull Request if changes detected
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           COMMIT_SHA: ${{ steps.upstream_info.outputs.sha }}
           COMMIT_MSG: ${{ steps.upstream_info.outputs.msg }}
@@ -106,6 +95,8 @@ jobs:
           cd opg-ewbi-crds
           if [ -z "$(git status --porcelain)" ]; then
             echo "No changes detected. Repository is already up to date."
+            echo "## Upstream Synchronization Results" >> "$GITHUB_STEP_SUMMARY"
+            echo "Repository is already up to date with upstream main (\`$COMMIT_SHA\`)." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
 
@@ -119,14 +110,33 @@ jobs:
           # Push branch explicitly using repository token
           git push "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" "$BRANCH_NAME" --force
 
-          # Check if PR already exists
-          PR_EXISTS=$(gh pr list --head "$BRANCH_NAME" --state open --json number --jq '.[0].number // empty')
+          COMPARE_URL="https://github.com/${{ github.repository }}/compare/main...${BRANCH_NAME}?expand=1"
+
+          # Attempt PR creation via gh CLI if permitted by repository policy
+          PR_CREATED=false
+          PR_EXISTS=$(gh pr list --head "$BRANCH_NAME" --state open --json number --jq '.[0].number // empty' 2>/dev/null || true)
           if [ -n "$PR_EXISTS" ]; then
-            echo "Pull Request #$PR_EXISTS already exists and was updated."
+            echo "Pull Request #$PR_EXISTS already exists and was updated with latest branch push."
+            PR_CREATED=true
           else
-            gh pr create \
+            if gh pr create \
               --title "chore(sync): update operator CRDs from main ($COMMIT_SHA)" \
               --body "Automated synchronization of operator CRD definitions from neonephos-katalis/opg-ewbi-operator main ($COMMIT_SHA): $COMMIT_MSG" \
               --base main \
-              --head "$BRANCH_NAME"
+              --head "$BRANCH_NAME" 2>/tmp/gh_pr_err.log; then
+              PR_CREATED=true
+            else
+              echo "Note: Automatic PR creation is restricted by enterprise policy."
+              cat /tmp/gh_pr_err.log || true
+            fi
+          fi
+
+          # Output rich summary for GitHub Actions UI
+          echo "## Upstream Synchronization Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Upstream Commit:** \`$COMMIT_SHA\` ($COMMIT_MSG)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Synchronized Branch:** [\`$BRANCH_NAME\`](https://github.com/${{ github.repository }}/tree/${BRANCH_NAME})" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$PR_CREATED" = "true" ]; then
+            echo "- **Pull Request:** Successfully opened/updated" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- **Pull Request Action Required:** [Click here to open the Pull Request with 1-click]($COMPARE_URL)" >> "$GITHUB_STEP_SUMMARY"
           fi
